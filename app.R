@@ -4,12 +4,7 @@ library(openxlsx)
 library(DT)
 
 # Load the RDS file
-data <- readRDS("all_results")
-
-for (i in names(data)){
-  data[[i]][['Only_PRECOG']] <-data[[i]][['Only_precog']]
-  data[[i]][['Only_precog']]<- NULL
-}
+data <- readRDS(url("https://github.com/ingmbioinfo/cancerhubs/raw/refs/heads/main/result/all_results.rds"))
 
 # Define the CancerHubs-inspired color palette for styling
 cancerhubs_style <- list(

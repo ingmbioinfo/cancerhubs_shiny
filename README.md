@@ -61,27 +61,6 @@ In the **Gene Ranking** tab, you can:
 - **View Ranking Plot**: Visualize the gene's rank across different tumor types.
 - **Download Plot**: Download the ranking plot as a PDF file.
 
-## Application Styling
-The user interface uses a custom CancerHubs-inspired color palette:
-- **Background**: Light blue tones for a calming interface.
-- **Primary Text**: Dark blue for readability.
-- **Accent Elements**: Teal and aqua for visual highlights, buttons, and header text.
-
-The UI components include:
-- A **Sidebar Panel** for user inputs, with dropdown menus and text inputs for filtering the data.
-- A **Main Panel** that displays the data and plots, with tabs for easy navigation.
-
-## Code Overview
-The application has two primary components:
-1. **UI Definition** (`ui`): Defines the layout, input elements, and overall styling of the application.
-2. **Server Logic** (`server`): Defines the interactive behavior, such as rendering tables, generating plots, and providing downloads.
-
-The server logic relies heavily on **reactive functions** to update the outputs dynamically based on user inputs. The application includes several download handlers that allow users to download dataframes, ranking tables, and plots for offline analysis.
-
-## Example Usage
-- To view the list of genes for a specific cancer type, navigate to the **View Dataframe** tab, select your desired **Cancer Type** and **Dataframe**, and explore the data.
-- To explore the ranking of a specific gene, go to the **Gene Ranking** tab, enter the gene name, select the appropriate subset, and check the ranking table and plot.
-
 ## Contributing
 If you wish to contribute to the project, feel free to fork the repository and submit a pull request. We welcome improvements and suggestions to enhance the user experience and data visualization features.
 

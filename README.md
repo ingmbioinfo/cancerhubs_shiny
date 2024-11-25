@@ -21,7 +21,7 @@ To run this Shiny application, you will need:
 ## Installation
 1. **Clone the repository**:
    ```sh
-   git clone https://github.com/your_username/CancerHubsDataExplorer.git
+   git clone https://github.com/ingmbioinfo/cancerhubs_shiny.git
    ```
 
 2. **Install required R packages (if needed)**:
@@ -32,9 +32,6 @@ To run this Shiny application, you will need:
    install.packages("openxlsx")
    install.packages("DT")
    ```
-
-3. **Load the data**:
-   Make sure you have the `all_results` RDS file in the working directory or update the path to point to its location.
 
 ## Running the App
 To run the Shiny app, open R or RStudio and execute the following commands:

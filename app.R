@@ -2,7 +2,9 @@ library(shiny)
 library(ggplot2)
 library(openxlsx)
 library(DT)
+library(igraph)
 library(plotly)
+library(RColorBrewer)
 
 # Load the RDS files
 data <- readRDS(url("https://github.com/ingmbioinfo/cancerhubs/raw/refs/heads/main/result/all_results.rds"))

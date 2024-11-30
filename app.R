@@ -2,9 +2,11 @@ library(shiny)
 library(ggplot2)
 library(openxlsx)
 library(DT)
+library(plotly)
 
-# Load the RDS file
+# Load the RDS files
 data <- readRDS(url("https://github.com/ingmbioinfo/cancerhubs/raw/refs/heads/main/result/all_results.rds"))
+interactors <- readRDS(url("https://github.com/ingmbioinfo/cancerhubs/raw/refs/heads/main/data/biogrid_interactors"))
 
 # Source the styles and functions from the R subdirectory
 source("R/styles.R")  # Define cancerhubs_style
@@ -12,6 +14,7 @@ source("R/sidebar_functions.R")
 source("R/main_panel_functions.R")
 source("R/gene_ranking_functions.R")
 source("R/plot_functions.R")
+source("R/network_plot_functions.R")  # Load the new network plot function
 
 # Define UI (Make sure cancerhubs_style is available here)
 ui <- fluidPage(
@@ -59,8 +62,63 @@ ui <- fluidPage(
   ),
   
   sidebarLayout(
-    createSidebar(),
-    createMainPanel()
+    sidebarPanel(
+      div(class = "sidebar",
+          conditionalPanel(
+            condition = "input.tabSelected === 'View Dataframe'",
+            selectInput("cancer_type_df", "Select Cancer Type:", choices = names(data)),
+            selectInput("dataframe", "Select Dataframe:",
+                        choices = c("All Genes" = "All_Genes", 
+                                    "PRECOG" = "PRECOG", 
+                                    "Non PRECOG" = "Non_PRECOG",
+                                    "Only PRECOG" = "Only_PRECOG")),
+            downloadButton("download_dataframe", "Download Dataframe (XLSX)")
+          ),
+          conditionalPanel(
+            condition = "input.tabSelected === 'Gene Ranking'",
+            textInput("gene", "Enter Gene Name:", value = "TP53"),
+            selectInput("dataframe_subset", "Select Dataframe Subset:",
+                        choices = c("All Genes" = "All_Genes", 
+                                    "PRECOG" = "PRECOG", 
+                                    "Non PRECOG" = "Non_PRECOG",
+                                    "Only PRECOG" = "Only_PRECOG")),
+            DTOutput("ranking_table"),
+            downloadButton("download_plot", "Download Plot (PDF)"),
+            downloadButton("download_ranking_table", "Download Ranking Table (XLSX)")
+          ),
+          conditionalPanel(
+            condition = "input.tabSelected === 'Network Plot'",
+            h4("Nodes Table"),
+            DTOutput("nodes_table"),
+            downloadButton("download_network_nodes", "Download Nodes Table (XLSX)"),
+            br(), br(),
+            h4("Edges Table"),
+            DTOutput("edges_table"),
+            downloadButton("download_network_edges", "Download Edges Table (XLSX)")
+          )
+      )
+    ),
+    mainPanel(
+      div(class = "main-panel",
+          tabsetPanel(
+            id = "tabSelected",
+            tabPanel("View Dataframe", value = "View Dataframe", DTOutput("data_view")),
+            tabPanel("Gene Ranking", value = "Gene Ranking", plotOutput("ranking_plot", height = "600px")),
+            tabPanel("Network Plot", value = "Network Plot",
+                     fluidRow(
+                       column(3, selectInput("network_tumor", "Select Tumor:", choices = names(data))),
+                       column(3, selectInput("network_dataset_type", "Select Dataset Type:", choices = c("All_Genes", "PRECOG", "Non_PRECOG", "Only_PRECOG"))),
+                       column(3, numericInput("network_top_n", "Number of Top Genes:", value = 10, min = 1)),
+                       column(3, checkboxInput("network_mutated_interactors", "Include Only Mutated Interactors", value = TRUE))
+                     ),
+                     plotlyOutput("network_plot", height = "600px"),
+                     br(),
+                     h4("Legend"),
+                     plotOutput("network_legend_plot")
+            )
+          )
+      )
+    )
   )
 )
 
@@ -151,6 +209,90 @@ server <- function(input, output, session) {
       write.xlsx(get_gene_ranking_reactive(), file)
     }
   )
+  
+  # Reactive to fetch nodes and edges data for the network plot
+  network_data <- reactive({
+    req(input$network_tumor, input$network_dataset_type)
+    
+    tumor_data <- data[[input$network_tumor]][[input$network_dataset_type]]
+    top_genes <- head(tumor_data[order(-tumor_data$network_score), ], input$network_top_n)
+    
+    # Extract nodes and edges for the network
+    nodes <- data.frame(
+      name = top_genes$gene_list,
+      score = top_genes$network_score,
+      precog_metaZ = top_genes$precog_metaZ,
+      mutation = top_genes$mutation,
+      stringsAsFactors = FALSE
+    )
+    edges <- list()
+    for (gene in nodes$name) {
+      if (gene %in% names(interactors$as.matrix.interactors.)) {
+        interactors_list <- interactors$as.matrix.interactors.[[gene]]
+        interactors_list <- interactors_list[interactors_list %in% nodes$name]
+        for (interactor in interactors_list) {
+          if (gene != interactor) {
+            edges <- append(edges, list(c(gene, interactor)))
+          }
+        }
+      }
+    }
+    edges_df <- do.call(rbind, edges)
+    edges_df <- as.data.frame(edges_df, stringsAsFactors = FALSE)
+    colnames(edges_df) <- c("from", "to")
+    
+    list(nodes = nodes, edges = edges_df)
+  })
+  
+  # Display nodes table
+  output$nodes_table <- renderDT({
+    nodes <- network_data()$nodes
+    req(nrow(nodes) > 0)  # Ensure there is at least one row before rendering
+    
+    datatable(nodes, options = list(pageLength = 10, scrollX = TRUE))
+  })
+  
+  # Display edges table
+  output$edges_table <- renderDT({
+    edges <- network_data()$edges
+    req(nrow(edges) > 0)  # Ensure there is at least one row before rendering
+    
+    datatable(edges, options = list(pageLength = 10, scrollX = TRUE))
+  })
+  
+  # Provide download for the edges table as XLSX
+  output$download_network_edges <- downloadHandler(
+    filename = function() {
+      paste(input$network_tumor, '_', input$network_dataset_type, "_edges.xlsx", sep = "")
+    },
+    content = function(file) {
+      write.xlsx(network_data()$edges, file)
+    }
+  )
+  
+  # Provide download for the nodes table as XLSX
+  output$download_network_nodes <- downloadHandler(
+    filename = function() {
+      paste(input$network_tumor, '_', input$network_dataset_type, "_nodes.xlsx", sep = "")
+    },
+    content = function(file) {
+      write.xlsx(network_data()$nodes, file)
+    }
+  )
+  
+  # Render the network plot
+  output$network_plot <- renderPlotly({
+    req(input$network_tumor)
+    req(input$network_dataset_type)
+    
+    # Call the plot_tumor_network function to generate the plotly object
+    plot_tumor_network(data, interactors, tumor = input$network_tumor, dataset_type = input$network_dataset_type, top_n = input$network_top_n, mutated_interactors = input$network_mutated_interactors)
+  })
+  
+  # Render the network legend
+  output$network_legend_plot <- renderPlot({
+    plot.new()
+  })
 }
 
 shinyApp(ui = ui, server = server)

@@ -6,6 +6,7 @@ library(igraph)
 library(plotly)
 library(RColorBrewer)
 library(dplyr)
+library(tidyr)
 
 # Load the RDS files
 data <- readRDS(url("https://github.com/ingmbioinfo/cancerhubs/raw/refs/heads/main/result/all_results.rds"))
@@ -19,6 +20,7 @@ source("R/gene_ranking_functions.R")
 source("R/plot_functions.R")
 source("R/network_plot_functions.R")  # Load the new network plot function
 source("R/common_genes_function.R")
+source("R/heatmaps_functions.R")
 
 # Define UI (Make sure cancerhubs_style is available here)
 ui <- fluidPage(
@@ -243,7 +245,7 @@ server <- function(input, output, session) {
   })
   
   # Event to extract genes and prepare data for download
-  extracted_data_reactive <- eventReactive(input$run_extraction, {
+  extracted_data_reactive <- reactive({
     req(input$num_lines, input$num_cancers)  # Ensure parameters are provided
     n <- input$num_lines
     num_cancers <- input$num_cancers
@@ -255,6 +257,36 @@ server <- function(input, output, session) {
     # Return the common genes data
     return(common_genes)
   })
+  
+  
+  # Reactive value to store the selected dataframe
+  selected_df <- reactiveVal("All_Genes")
+  
+  # Observe the selected dataframe input and update the reactive value
+  observeEvent(input$selected_dataframe, {
+    selected_df(input$selected_dataframe)
+  })
+  
+  # Reactive expression to run the analysis
+  analysis_result <- reactive( {
+    req(input$num_lines)
+    # Assuming 'data' is available in your app's environment
+    extracted_data <- extract_top_n_genes(data, input$num_lines)
+    gene_presence_df <- create_presence_matrix_per_category(extracted_data)
+    heatmaps <- create_category_heatmaps(gene_presence_df, top_n = input$num_lines)
+    return(heatmaps)
+  })
+  
+  # Render the heatmap
+  output$heatmap_output <- renderPlot({
+    heatmaps <- analysis_result()
+    # Display the heatmap for the selected dataframe
+    
+    print(heatmaps[[selected_df()]])
+  })
+  
+  
+  
   
   # Provide download for the extracted data as XLSX
   output$download_extracted_data <- downloadHandler(

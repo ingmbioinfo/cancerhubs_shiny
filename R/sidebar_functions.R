@@ -26,12 +26,11 @@ createSidebar <- function() {
         ),
         conditionalPanel(
           condition = "input.tabSelected === 'Common Genes'",
-          numericInput("num_lines", "Number of Lines:", value = 50),
+          numericInput("num_lines", "Number of Top genes:", value = 50),
           numericInput("num_cancers", "Number of Cancers:", value = 2),
           selectInput("selected_dataframe", "Choose Dataframe to View:", 
-                      choices = c("PRECOG", "Non_PRECOG", "Only_PRECOG", "All_genes"), 
-                      selected = "PRECOG"),
-          actionButton("run_extraction", "Extract Genes"),
+                      choices = c("All_Genes","PRECOG", "Non_PRECOG", "Only_PRECOG"), 
+                      selected = "All_Genes"),
           downloadButton("download_extracted_data", "Download Extracted Data (XLSX)")
         ),
         conditionalPanel(

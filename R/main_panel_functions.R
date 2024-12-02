@@ -5,7 +5,7 @@ createMainPanel <- function() {
           id = "tabSelected",
           tabPanel("View Dataframe", value = "View Dataframe", DTOutput("data_view")),
           tabPanel("Gene Ranking", value = "Gene Ranking", plotOutput("ranking_plot", height = "600px")),
-          tabPanel("Common Genes", value = "Common Genes",uiOutput("category_tabs"), DTOutput("extraction_view")),
+          tabPanel("Common Genes", value = "Common Genes",uiOutput("category_tabs"), DTOutput("extraction_view"),plotOutput("heatmap_output")),
           tabPanel("Network Plot", value = "Network Plot",
                    fluidRow(
                      column(3, selectInput("network_tumor", "Select Tumor:", choices = names(data))),

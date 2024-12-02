@@ -58,7 +58,7 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
   scores <- top_genes$network_score[match(V(g)$name, top_genes$gene_list)]
   scores[is.na(scores)] <- max(scores, na.rm = TRUE) + 1 # Handle interactors not in top genes
   colors <- colorRampPalette(brewer.pal(9, "YlOrRd"))(length(unique(scores)))
-  score_colors <- colors[rank(scores, ties.method = "min")]
+  score_colors <- colors[rank(scores, ties.method = "min")]  # Highest scores should be red
   V(g)$color <- score_colors
   
   # Add attributes for PRECOG and mutation status to determine shape and size
@@ -101,7 +101,8 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
       y = c(layout[v1, "y"], layout[v2, "y"]),
       z = c(layout[v1, "z"], layout[v2, "z"]),
       line = list(width = 1, color = "gray"),
-      hoverinfo = "none"
+      hoverinfo = "none",
+      showlegend = FALSE  # Hide edge traces from legend
     )
   }
   
@@ -117,10 +118,21 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
     marker = list(
       size = plot_data$size,
       color = plot_data$color,
+      colorscale = "YlOrRd",
+      reversescale = TRUE,  # Reverse color scale to make highest scores red
+      cmin = min(scores),
+      cmax = max(scores),
+      colorbar = list(
+        title = "Network Score",
+        thickness = 10,
+        len = 0.3,
+        x = 1.3  # Move colorbar further to the right
+      ),
       symbol = ifelse(plot_data$shape == "circle", "circle", "square"),
       line = list(width = 0.5, color = "black")
     ),
-    hoverinfo = "text"
+    hoverinfo = "text",
+    showlegend = FALSE  # Hide node traces from legend
   )
   
   # Create the plotly figure
@@ -133,7 +145,8 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
       y = edge_trace$y,
       z = edge_trace$z,
       line = edge_trace$line,
-      hoverinfo = edge_trace$hoverinfo
+      hoverinfo = edge_trace$hoverinfo,
+      showlegend = edge_trace$showlegend
     )
   }
   fig <- fig %>% add_trace(
@@ -145,10 +158,11 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
     text = node_trace$text,
     textposition = node_trace$textposition,
     marker = node_trace$marker,
-    hoverinfo = node_trace$hoverinfo
+    hoverinfo = node_trace$hoverinfo,
+    showlegend = node_trace$showlegend
   )
   
-  # Set layout for plotly figure
+  # Add annotations for shape and size legends (higher, closer to colorbar)
   fig <- fig %>% layout(
     title = paste("Network for", tumor, "-", dataset_type),
     scene = list(
@@ -156,7 +170,18 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
       yaxis = list(title = "", showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
       zaxis = list(title = "", showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE)
     ),
-    showlegend = FALSE
+    showlegend = TRUE,
+    margin = list(r = 250, b = 150),  # Add more space to the right and bottom
+    annotations = list(
+      list(
+        x = 1.35, y = 0.25, text = "Shape Legend:\nCircle: PRECOG\nSquare: Non-PRECOG",
+        showarrow = FALSE, xref = "paper", yref = "paper", align = "right", font = list(size = 9)
+      ),
+      list(
+        x = 1.35, y = 0.10, text = "Size Legend:\nLarge: Mutated (ORF/NON_ORF/BOTH)\nSmall: Non-mutated",
+        showarrow = FALSE, xref = "paper", yref = "paper", align = "right", font = list(size = 9)
+      )
+    )
   )
   
   # Render the interactive 3D plot

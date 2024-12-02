@@ -5,6 +5,7 @@ library(DT)
 library(igraph)
 library(plotly)
 library(RColorBrewer)
+library(dplyr)
 
 # Load the RDS files
 data <- readRDS(url("https://github.com/ingmbioinfo/cancerhubs/raw/refs/heads/main/result/all_results.rds"))
@@ -17,6 +18,7 @@ source("R/main_panel_functions.R")
 source("R/gene_ranking_functions.R")
 source("R/plot_functions.R")
 source("R/network_plot_functions.R")  # Load the new network plot function
+source("R/common_genes_function.R")
 
 # Define UI (Make sure cancerhubs_style is available here)
 ui <- fluidPage(
@@ -64,66 +66,10 @@ ui <- fluidPage(
   ),
   
   sidebarLayout(
-    sidebarPanel(
-      div(class = "sidebar",
-          conditionalPanel(
-            condition = "input.tabSelected === 'View Dataframe'",
-            selectInput("cancer_type_df", "Select Cancer Type:", choices = names(data)),
-            selectInput("dataframe", "Select Dataframe:",
-                        choices = c("All Genes" = "All_Genes", 
-                                    "PRECOG" = "PRECOG", 
-                                    "Non PRECOG" = "Non_PRECOG",
-                                    "Only PRECOG" = "Only_PRECOG")),
-            downloadButton("download_dataframe", "Download Dataframe (XLSX)")
-          ),
-          conditionalPanel(
-            condition = "input.tabSelected === 'Gene Ranking'",
-            textInput("gene", "Enter Gene Name:", value = "TP53"),
-            selectInput("dataframe_subset", "Select Dataframe Subset:",
-                        choices = c("All Genes" = "All_Genes", 
-                                    "PRECOG" = "PRECOG", 
-                                    "Non PRECOG" = "Non_PRECOG",
-                                    "Only PRECOG" = "Only_PRECOG")),
-            DTOutput("ranking_table"),
-            downloadButton("download_plot", "Download Plot (PDF)"),
-            downloadButton("download_ranking_table", "Download Ranking Table (XLSX)")
-          ),
-          conditionalPanel(
-            condition = "input.tabSelected === 'Network Plot'",
-            h4("Nodes Table"),
-            DTOutput("nodes_table"),
-            downloadButton("download_network_nodes", "Download Nodes Table (XLSX)"),
-            br(), br(),
-            h4("Edges Table"),
-            DTOutput("edges_table"),
-            downloadButton("download_network_edges", "Download Edges Table (XLSX)")
-          )
-      )
-    ),
-    mainPanel(
-      div(class = "main-panel",
-          tabsetPanel(
-            id = "tabSelected",
-            tabPanel("View Dataframe", value = "View Dataframe", DTOutput("data_view")),
-            tabPanel("Gene Ranking", value = "Gene Ranking", plotOutput("ranking_plot", height = "600px")),
-            tabPanel("Network Plot", value = "Network Plot",
-                     fluidRow(
-                       column(3, selectInput("network_tumor", "Select Tumor:", choices = names(data))),
-                       column(3, selectInput("network_dataset_type", "Select Dataset Type:", choices = c("All_Genes", "PRECOG", "Non_PRECOG", "Only_PRECOG"))),
-                       column(3, numericInput("network_top_n", "Number of Top Genes:", value = 10, min = 1)),
-                       column(3, checkboxInput("network_mutated_interactors", "Include Only Mutated Interactors", value = TRUE))
-                     ),
-                     plotlyOutput("network_plot", height = "600px"),
-                     br(),
-                     h4("Legend"),
-                     plotOutput("network_legend_plot")
-            )
-          )
-      )
-    )
-  )
+    createSidebar(),
+    createMainPanel()
+  ),
 )
-
 # Server logic
 server <- function(input, output, session) {
   # Reactive to fetch the selected dataframe
@@ -295,6 +241,36 @@ server <- function(input, output, session) {
   output$network_legend_plot <- renderPlot({
     plot.new()
   })
+  
+  # Event to extract genes and prepare data for download
+  extracted_data_reactive <- eventReactive(input$run_extraction, {
+    req(input$num_lines, input$num_cancers)  # Ensure parameters are provided
+    n <- input$num_lines
+    num_cancers <- input$num_cancers
+    top_lines <- extract_top_n_lines(data, n)  # Assuming this function is defined elsewhere
+    
+    # Use the modified function to get common genes
+    common_genes <- get_common_genes_across_cancers(top_lines, num_cancers)
+    
+    # Return the common genes data
+    return(common_genes)
+  })
+  
+  # Provide download for the extracted data as XLSX
+  output$download_extracted_data <- downloadHandler(
+    filename = function() {
+      paste("Extracted_Genes_", Sys.Date(), ".xlsx", sep = "")
+    },
+    content = function(file) {
+      category_genes <- extracted_data_reactive()
+      req(category_genes)
+      
+      # Write each subset as a sheet in the Excel file
+      write.xlsx(category_genes, file)
+    }
+  )
+  
+  
 }
 
 shinyApp(ui = ui, server = server)

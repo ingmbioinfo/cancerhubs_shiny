@@ -23,7 +23,28 @@ createSidebar <- function() {
           tableOutput("gene_info_table"),
           downloadButton("download_plot", "Download Plot (PDF)"),
           downloadButton("download_ranking_table", "Download Ranking Table (XLSX)")
+        ),
+        conditionalPanel(
+          condition = "input.tabSelected === 'Common Genes'",
+          numericInput("num_lines", "Number of Lines:", value = 50),
+          numericInput("num_cancers", "Number of Cancers:", value = 2),
+          selectInput("selected_dataframe", "Choose Dataframe to View:", 
+                      choices = c("PRECOG", "Non_PRECOG", "Only_PRECOG", "All_genes"), 
+                      selected = "PRECOG"),
+          actionButton("run_extraction", "Extract Genes"),
+          downloadButton("download_extracted_data", "Download Extracted Data (XLSX)")
+        ),
+        conditionalPanel(
+          condition = "input.tabSelected === 'Network Plot'",
+          h4("Nodes Table"),
+          DTOutput("nodes_table"),
+          downloadButton("download_network_nodes", "Download Nodes Table (XLSX)"),
+          br(), br(),
+          h4("Edges Table"),
+          DTOutput("edges_table"),
+          downloadButton("download_network_edges", "Download Edges Table (XLSX)")
         )
     )
   )
 }
+

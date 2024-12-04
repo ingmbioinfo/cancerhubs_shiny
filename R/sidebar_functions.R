@@ -27,11 +27,14 @@ createSidebar <- function() {
         conditionalPanel(
           condition = "input.tabSelected === 'Common Genes'",
           numericInput("num_lines", "Number of Top genes:", value = 50),
-          numericInput("num_cancers", "Number of Cancers:", value = 2),
           selectInput("selected_dataframe", "Choose Dataframe to View:", 
                       choices = c("All_Genes","PRECOG", "Non_PRECOG", "Only_PRECOG"), 
                       selected = "All_Genes"),
-          downloadButton("download_extracted_data", "Download Extracted Data (XLSX)")
+          downloadButton("download_high_res", "Download High-Resolution Heatmap"),
+          br(),
+          br(),
+          numericInput("num_cancers", "Min. Presence in Tumors:", value = 2),
+          downloadButton("download_extracted_data", "Download Extracted Data (XLSX)"),
         ),
         conditionalPanel(
           condition = "input.tabSelected === 'Network Plot'",
@@ -41,7 +44,8 @@ createSidebar <- function() {
           br(), br(),
           h4("Edges Table"),
           DTOutput("edges_table"),
-          downloadButton("download_network_edges", "Download Edges Table (XLSX)")
+          downloadButton("download_network_edges", "Download Edges Table (XLSX)"),
+          
         )
     )
   )

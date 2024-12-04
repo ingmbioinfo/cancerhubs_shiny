@@ -244,6 +244,8 @@ server <- function(input, output, session) {
     plot.new()
   })
   
+  
+  
   # Event to extract genes and prepare data for download
   extracted_data_reactive <- reactive({
     req(input$num_lines, input$num_cancers)  # Ensure parameters are provided
@@ -277,14 +279,34 @@ server <- function(input, output, session) {
     return(heatmaps)
   })
   
-  # Render the heatmap
-  output$heatmap_output <- renderPlot({
+  output$heatmap_output <- renderPlotly({
+    req(analysis_result())
     heatmaps <- analysis_result()
-    # Display the heatmap for the selected dataframe
     
-    print(heatmaps[[selected_df()]])
+    # Validate selected dataframe
+    selected <- selected_df()
+    req(selected %in% names(heatmaps))
+    
+    # Extract and validate heatmap
+    heatmap <- heatmaps[[selected]]
+    req(heatmap)
+    
+    # Convert ggplot to plotly
+    ggplotly(heatmap)
   })
   
+  output$download_high_res <- downloadHandler(
+    filename = function() {
+      paste("heatmap_high_res", Sys.Date(), ".png", sep = "")
+    },
+    content = function(file) {
+      heatmaps <- analysis_result()
+      selected <- selected_df()
+      heatmap <- heatmaps[[selected]]
+      
+      ggsave(file, plot = heatmap, device = "png", width = 12, height = 8, dpi = 300)
+    }
+  )
   
   
   

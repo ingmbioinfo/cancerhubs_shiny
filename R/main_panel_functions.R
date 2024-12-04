@@ -5,7 +5,7 @@ createMainPanel <- function() {
           id = "tabSelected",
           tabPanel("View Dataframe", value = "View Dataframe", DTOutput("data_view")),
           tabPanel("Gene Ranking", value = "Gene Ranking", plotOutput("ranking_plot", height = "600px")),
-          tabPanel("Common Genes", value = "Common Genes",uiOutput("category_tabs"), DTOutput("extraction_view"),plotOutput("heatmap_output")),
+          tabPanel("Common Genes", value = "Common Genes",uiOutput("category_tabs"), DTOutput("extraction_view"),plotlyOutput("heatmap_output",height = "800px")),
           tabPanel("Network Plot", value = "Network Plot",
                    fluidRow(
                      column(3, selectInput("network_tumor", "Select Tumor:", choices = names(data))),
@@ -16,7 +16,8 @@ createMainPanel <- function() {
                    plotlyOutput("network_plot", height = "600px"),
                    br(),
                    h4("Legend"),
-                   plotOutput("network_legend_plot")
+                   plotOutput("network_legend_plot"),
+          
           )
         )
     )

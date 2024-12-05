@@ -1,4 +1,4 @@
-plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Genes", top_n = 10, mutated_interactors = TRUE) {
+plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Genes", top_n = 10, mutated_interactors = TRUE, color_by = "network_score") {
   # Check if the selected tumor exists in the data
   if (!tumor %in% names(data)) {
     stop("Selected tumor is not available in the data")
@@ -54,15 +54,23 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
   g <- graph_from_edgelist(edges_matrix, directed = FALSE)
   V(g)$label <- V(g)$name
   
-  # Set color based on network score using a colormap
-  scores <- top_genes$network_score[match(V(g)$name, top_genes$gene_list)]
-  scores[is.na(scores)] <- max(scores, na.rm = TRUE) + 1 # Handle interactors not in top genes
-  colors <- colorRampPalette(brewer.pal(9, "YlOrRd"))(length(unique(scores)))
-  score_colors <- colors[rank(scores, ties.method = "min")]  # Highest scores should be red
-  V(g)$color <- score_colors
+  # Set color based on the selected attribute
+  if (color_by == "network_score") {
+    scores <- top_genes$network_score[match(V(g)$name, top_genes$gene_list)]
+    scores[is.na(scores)] <- max(scores, na.rm = TRUE) + 1 # Handle interactors not in top genes
+    colors <- colorRampPalette(brewer.pal(9, "YlOrRd"))(100)
+    score_colors <- colors[findInterval(scores, seq(min(scores), max(scores), length.out = 100))]
+    V(g)$color <- score_colors
+  } else if (color_by == "precog_metaZ") {
+    metaz_values <- top_genes$precog_metaZ[match(V(g)$name, top_genes$gene_list)]
+    metaz_values[is.na(metaz_values)] <- 0 # Handle interactors not in top genes
+    colors <- colorRampPalette(c("blue", "white", "red"))(100)
+    metaz_colors <- colors[findInterval(metaz_values, seq(min(metaz_values), max(metaz_values), length.out = 100))]
+    V(g)$color <- metaz_colors
+  }
   
   # Add attributes for PRECOG and mutation status to determine shape and size
-  precog_status <- ifelse(V(g)$name %in% top_genes$gene_list[top_genes$precog_metaZ > 0], "PRECOG", "Non-PRECOG")
+  precog_status <- ifelse(V(g)$name %in% top_genes$gene_list[top_genes$precog_metaZ >= 1.96 | top_genes$precog_metaZ <= -1.96], "PRECOG", "Non-PRECOG")
   mutation_status <- top_genes$mutation[match(V(g)$name, top_genes$gene_list)]
   mutation_status[is.na(mutation_status)] <- "None"
   
@@ -118,12 +126,12 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
     marker = list(
       size = plot_data$size,
       color = plot_data$color,
-      colorscale = "YlOrRd",
-      reversescale = TRUE,  # Reverse color scale to make highest scores red
-      cmin = min(scores),
-      cmax = max(scores),
+      colorscale = if (color_by == "network_score") "YlOrRd" else list(c(0, "blue"), c(0.5, "white"), c(1, "red")),
+      reversescale = if (color_by == "network_score") TRUE else FALSE,
+      cmin = if (color_by == "precog_metaZ") min(metaz_values) else min(scores),
+      cmax = if (color_by == "precog_metaZ") max(metaz_values) else max(scores),
       colorbar = list(
-        title = "Network Score",
+        title = if (color_by == "network_score") "Network Score" else "Precog MetaZ",
         thickness = 10,
         len = 0.3,
         x = 1.3  # Move colorbar further to the right

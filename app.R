@@ -231,9 +231,11 @@ server <- function(input, output, session) {
   output$network_plot <- renderPlotly({
     req(input$network_tumor)
     req(input$network_dataset_type)
+    req(input$network_color_by)
     
     # Call the plot_tumor_network function to generate the plotly object
-    plot_tumor_network(data, interactors, tumor = input$network_tumor, dataset_type = input$network_dataset_type, top_n = input$network_top_n, mutated_interactors = input$network_mutated_interactors)
+    plot_tumor_network(data, interactors, tumor = input$network_tumor, dataset_type = input$network_dataset_type, 
+                       top_n = input$network_top_n, mutated_interactors = input$network_mutated_interactors, color_by = input$network_color_by)
   })
   
   # Render the network legend

@@ -8,11 +8,8 @@ library(RColorBrewer)
 library(dplyr)
 library(tidyr)
 
-# Load the RDS files
-data <- readRDS(url("https://github.com/ingmbioinfo/cancerhubs/raw/refs/heads/main/result/all_results.rds"))
-interactors <- readRDS(url("https://github.com/ingmbioinfo/cancerhubs/raw/refs/heads/main/data/biogrid_interactors"))
-
 # Source the styles and functions from the R subdirectory
+source("R/data.R")
 source("R/styles.R")  # Define cancerhubs_style
 source("R/sidebar_functions.R")
 source("R/main_panel_functions.R")

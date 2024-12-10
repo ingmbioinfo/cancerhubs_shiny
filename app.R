@@ -307,6 +307,28 @@ server <- function(input, output, session) {
     }
   )
   
+  output$network_plot <- renderPlotly({
+    req(input$network_tumor, input$network_dataset_type, input$network_color_by)
+    
+    # Generate the Plotly plot
+    plot <- plot_tumor_network(data, interactors, 
+                               tumor = input$network_tumor, 
+                               dataset_type = input$network_dataset_type, 
+                               top_n = input$network_top_n, 
+                               mutated_interactors = input$network_mutated_interactors, 
+                               color_by = input$network_color_by)
+    
+    # Add custom configuration for higher resolution
+    plot %>%
+      config(
+        toImageButtonOptions = list(
+          format = "png",  # Format can be png, jpeg, etc.
+          width = 2880,    # Increase width for higher resolution
+          height = 1620,   # Increase height for higher resolution
+          scale = 3        # Scale factor for resolution
+        )
+      )
+  })
   
   
   # Provide download for the extracted data as XLSX

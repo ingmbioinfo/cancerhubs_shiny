@@ -19,7 +19,7 @@ extract_top_n_lines <- function(data, n) {
 }
 
 
-get_common_genes_across_cancers <- function(extracted_data, num_cancers) {
+get_common_genes_across_cancers <- function(extracted_data, num_cancers, selection) {
   # Initialize an empty list to store results
   category_genes <- list()
   
@@ -63,7 +63,7 @@ get_common_genes_across_cancers <- function(extracted_data, num_cancers) {
     
     
   }
-  
+  selected_df=category_genes[[selection]]
   # Return the list of common genes for each subset
-  return(category_genes)
+  return(selected_df)
 }

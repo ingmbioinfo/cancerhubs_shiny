@@ -1,4 +1,3 @@
-
 # Function to extract the top n genes for each cancer type and category
 extract_top_n_genes <- function(data, n) {
   extracted_data <- lapply(names(data), function(cancer_type) {
@@ -66,32 +65,34 @@ create_presence_matrix_per_category <- function(extracted_data) {
   return(combined_presence_df)
 }
 
-# Function to create heatmaps for each category
-create_category_heatmaps <- function(gene_presence_df, top_n = 50) {
+create_category_heatmaps <- function(gene_presence_df, top_n = 50, num_cancers = 1) {
   heatmaps <- list()
   
   for (category in unique(gene_presence_df$Category)) {
     category_data <- gene_presence_df %>% filter(Category == category)
     
-    # Select top N genes based on presence across cancer types
+    # Calculate TotalPresence before filtering
     category_data <- category_data %>%
-      mutate(TotalPresence = rowSums(across(-c(Gene, Category)))) %>%
-      arrange(desc(TotalPresence)) %>%   # Sort by TotalPresence (most present first)
-      head(top_n)
+      mutate(TotalPresence = rowSums(across(-c(Gene, Category))))
     
-    # Order genes by TotalPresence, then alphabetically
-    category_data <- category_data %>%
-      arrange((TotalPresence), Gene)  # Sorting by TotalPresence first, then by Gene name
+    # Filter genes expressed in at least num_cancers and sort consistently
+    filtered_data <- category_data %>%
+      filter(TotalPresence >= num_cancers) %>%
+      arrange(desc(TotalPresence), Gene) # Sort by TotalPresence, then alphabetically
+    
+    # Limit to top N genes after filtering
+    top_n_data <- head(filtered_data, top_n)
+    top_n_data = top_n_data %>% arrange(TotalPresence, desc(Gene))
     
     # Reshape data to long format
-    long_data <- category_data %>%
+    long_data <- top_n_data %>%
       pivot_longer(cols = -c(Gene, Category, TotalPresence), names_to = "CancerType", values_to = "Presence")
     
     # Convert 'Presence' to a factor with levels "Present" and "Not Present"
     long_data$Presence <- factor(long_data$Presence, levels = c(0, 1), labels = c("Not Present", "Present"))
     
     # Ensure genes are ordered by TotalPresence in the heatmap
-    long_data$Gene <- factor(long_data$Gene, levels = category_data$Gene)
+    long_data$Gene <- factor(long_data$Gene, levels = top_n_data$Gene)
     
     # Create the heatmap
     heatmap <- ggplot(long_data, aes(x = CancerType, y = Gene, fill = Presence)) +
@@ -111,11 +112,5 @@ create_category_heatmaps <- function(gene_presence_df, top_n = 50) {
   
   return(heatmaps)
 }
-
-
-# Display the heatmaps
-#for (category in names(heatmaps)) {
-#  print(heatmaps[[category]])
-#}
 
 

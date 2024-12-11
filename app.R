@@ -243,25 +243,25 @@ server <- function(input, output, session) {
     plot.new()
   })
   
-  
+  # Reactive value to store the selected dataframe
+  selected_df <- reactiveVal("All_Genes")
   
   # Event to extract genes and prepare data for download
   extracted_data_reactive <- reactive({
-    req(input$num_lines, input$num_cancers)  # Ensure parameters are provided
+    req(input$num_lines, input$num_cancers,input$selected_dataframe)  # Ensure parameters are provided
     n <- input$num_lines
     num_cancers <- input$num_cancers
     top_lines <- extract_top_n_lines(data, n)  # Assuming this function is defined elsewhere
     
     # Use the modified function to get common genes
-    common_genes <- get_common_genes_across_cancers(top_lines, num_cancers)
+    common_genes <- get_common_genes_across_cancers(top_lines, num_cancers, selection = input$selected_dataframe)
     
     # Return the common genes data
     return(common_genes)
   })
   
   
-  # Reactive value to store the selected dataframe
-  selected_df <- reactiveVal("All_Genes")
+  
   
   # Observe the selected dataframe input and update the reactive value
   observeEvent(input$selected_dataframe, {
@@ -270,11 +270,11 @@ server <- function(input, output, session) {
   
   # Reactive expression to run the analysis
   analysis_result <- reactive( {
-    req(input$num_lines)
+    req(input$num_lines,input$num_cancers)
     # Assuming 'data' is available in your app's environment
     extracted_data <- extract_top_n_genes(data, input$num_lines)
     gene_presence_df <- create_presence_matrix_per_category(extracted_data)
-    heatmaps <- create_category_heatmaps(gene_presence_df, top_n = input$num_lines)
+    heatmaps <- create_category_heatmaps(gene_presence_df, top_n = input$num_lines,num_cancers = input$num_cancers)
     return(heatmaps)
   })
   
@@ -301,11 +301,13 @@ server <- function(input, output, session) {
     content = function(file) {
       heatmaps <- analysis_result()
       selected <- selected_df()
+      req(selected %in% names(heatmaps))
       heatmap <- heatmaps[[selected]]
       
       ggsave(file, plot = heatmap, device = "png", width = 12, height = 8, dpi = 300)
     }
   )
+  
   
   output$network_plot <- renderPlotly({
     req(input$network_tumor, input$network_dataset_type, input$network_color_by)
@@ -337,11 +339,11 @@ server <- function(input, output, session) {
       paste("Extracted_Genes_", Sys.Date(), ".xlsx", sep = "")
     },
     content = function(file) {
-      category_genes <- extracted_data_reactive()
-      req(category_genes)
+      selected_df <- extracted_data_reactive()
+      req(selected_df)
       
       # Write each subset as a sheet in the Excel file
-      write.xlsx(category_genes, file)
+      write.xlsx(selected_df, file)
     }
   )
   

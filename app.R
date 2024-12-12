@@ -2,6 +2,7 @@ library(shiny)
 library(ggplot2)
 library(openxlsx)
 library(DT)
+library(purrr)
 library(igraph)
 library(plotly)
 library(RColorBrewer)
@@ -346,6 +347,23 @@ server <- function(input, output, session) {
       write.xlsx(selected_df, file)
     }
   )
+  
+  output$pan_cancer_table <- DT::renderDataTable({
+    req(input$dataframe_subset)  # Ensure the input exists
+    
+    # Calculate pan-cancer ranking dynamically
+    pan_cancer_results <- pan_cancer_ranking(
+      data = data,
+      df = input$dataframe_subset  # Dynamically use the selected dataframe subset
+    )
+    
+    # Display the results
+    datatable(
+      pan_cancer_results,
+      options = list(pageLength = 10, searching = TRUE),
+      rownames = TRUE
+    )
+  })
   
   
 }

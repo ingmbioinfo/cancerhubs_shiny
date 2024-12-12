@@ -36,3 +36,19 @@ get_gene_ranking <- function(gene_name, subset_df, data) {
   rankings <- rankings[order(rankings$Rank), ]
   rankings
 }
+
+pan_cancer_ranking <- function(data, df = 'All_Genes') {
+  l <- list()
+  for (i in names(data)) {
+    t_data <- data[[i]][[df]]
+    tot <- dim(t_data)[1]
+    t_data$c_score <- 1 - (1:nrow(t_data)) / tot
+    l[[i]] <- t_data[, c(1, 7)]  # Select gene_list and c_score
+  }
+  merged_df <- reduce(l, full_join, by = "gene_list")
+  merged_df$score <- rowSums(merged_df[, -1], na.rm = TRUE)
+  merged_df <- merged_df[order(merged_df$score, decreasing = TRUE), c('gene_list', 'score')]
+  merged_df$score <- 100 * merged_df$score / max(merged_df$score)
+  rownames(merged_df) <- 1:nrow(merged_df)
+  return(merged_df)
+}

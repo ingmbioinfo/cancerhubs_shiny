@@ -4,7 +4,10 @@ createMainPanel <- function() {
         tabsetPanel(
           id = "tabSelected",
           tabPanel("View Dataframe", value = "View Dataframe", DTOutput("data_view")),
-          tabPanel("Gene Ranking", value = "Gene Ranking", plotOutput("ranking_plot", height = "600px")),
+          tabPanel("Gene Ranking", value = "Gene Ranking", 
+                   plotOutput("ranking_plot", height = "600px"), 
+                   DTOutput("pan_cancer_table")  # Add a datatable for pan-cancer ranking
+          ),
           tabPanel("Common Genes", value = "Common Genes", 
                    uiOutput("category_tabs"), 
                    DTOutput("extraction_view"),
@@ -18,11 +21,9 @@ createMainPanel <- function() {
                      column(3, checkboxInput("network_mutated_interactors", "Include Only Mutated Interactors", value = TRUE))
                    ),
                    plotlyOutput("network_plot", height = "600px"),
-                   br(),
-          
+                   br()
           )
         )
     )
   )
 }
-

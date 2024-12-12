@@ -4,9 +4,9 @@ createMainPanel <- function() {
         tabsetPanel(
           id = "tabSelected",
           tabPanel("View Dataframe", value = "View Dataframe", DTOutput("data_view")),
-          tabPanel("Gene Ranking", value = "Gene Ranking", 
+          tabPanel("Gene Ranking", value = "Gene Ranking",
                    plotOutput("ranking_plot", height = "600px"), 
-                   DTOutput("pan_cancer_table")  # Add a datatable for pan-cancer ranking
+                   plotOutput("pan_cancer_gene_position", height = "100px")  # Add the specific plot
           ),
           tabPanel("Common Genes", value = "Common Genes", 
                    uiOutput("category_tabs"), 

@@ -1,4 +1,5 @@
 library(shiny)
+library(cowplot)
 library(ggplot2)
 library(openxlsx)
 library(DT)
@@ -114,6 +115,16 @@ server <- function(input, output, session) {
     return(ranking_data)
   })
   
+  
+  # Reactive function to calculate rankings for the selected gene
+  pan_cancer_ranking_reactive <- reactive({
+    req(input$df)
+    
+    # Get the ranking data
+    pan_cancer_results<- pan_cancer(data,input$df)
+    
+    return(pan_cancer_results)
+  })
   # Render the plot for gene rankings
   output$ranking_plot <- renderPlot({
     rankings <- get_gene_ranking_reactive()
@@ -139,12 +150,21 @@ server <- function(input, output, session) {
       paste(input$gene, "_ranking_plot.pdf", sep = "")
     },
     content = function(file) {
-      pdf(file, width = 10, height = 7)
       rankings <- get_gene_ranking_reactive()
-      if (nrow(rankings) > 0) {
-        print(create_ranking_plot(rankings, input$gene, input$dataframe_subset))
-      }
-      dev.off()
+      rankings <- pan_cancer_ranking_reactive()
+      ranking_plot <- create_ranking_plot(rankings, input$gene, input$dataframe_subset)
+      pan_cancer_plot <- create_pan_cancer_position_plot(pan_cancer_results, input$gene)
+      
+      # Combine the plots using cowplot
+      combined_plot <- plot_grid(
+        ranking_plot,
+        pan_cancer_plot,
+        ncol = 1,  # Stack the plots vertically
+        align = "v"
+      )
+      
+      # Save to PDF
+      ggsave(file, plot = combined_plot, device = 'pdf', width = 8, height = 12)
     }
   )
   
@@ -348,22 +368,16 @@ server <- function(input, output, session) {
     }
   )
   
-  output$pan_cancer_table <- DT::renderDataTable({
-    req(input$dataframe_subset)  # Ensure the input exists
+  output$pan_cancer_gene_position <- renderPlot({
+    req(input$gene, input$dataframe_subset)  # Ensure inputs are provided
     
-    # Calculate pan-cancer ranking dynamically
-    pan_cancer_results <- pan_cancer_ranking(
-      data = data,
-      df = input$dataframe_subset  # Dynamically use the selected dataframe subset
-    )
+    # Calculate pan-cancer ranking
+    pan_cancer_results <- pan_cancer_ranking(data = data, df = input$dataframe_subset)
     
-    # Display the results
-    datatable(
-      pan_cancer_results,
-      options = list(pageLength = 10, searching = TRUE),
-      rownames = TRUE
-    )
+    # Create the plot using the new function
+    create_pan_cancer_position_plot(pan_cancer_results, input$gene)
   })
+  
   
   
 }

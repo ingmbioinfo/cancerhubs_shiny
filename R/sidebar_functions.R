@@ -30,10 +30,11 @@ createSidebar <- function() {
           selectInput("selected_dataframe", "Choose Dataframe to View:", 
                       choices = c("All_Genes","PRECOG", "Non_PRECOG", "Only_PRECOG"), 
                       selected = "All_Genes"),
+          numericInput("num_cancers", "Min. Presence in Tumors:", value = 2),
+          br(),
           downloadButton("download_high_res", "Download High-Resolution Heatmap"),
           br(),
           br(),
-          numericInput("num_cancers", "Min. Presence in Tumors:", value = 2),
           downloadButton("download_extracted_data", "Download Extracted Data (XLSX)"),
         ),
         conditionalPanel(

@@ -195,8 +195,8 @@ server <- function(input, output, session) {
     )
     edges <- list()
     for (gene in nodes$name) {
-      if (gene %in% names(interactors$as.matrix.interactors.)) {
-        interactors_list <- interactors$as.matrix.interactors.[[gene]]
+      if (gene %in% names(interactors$gene_interactors)) {
+        interactors_list <- interactors$gene_interactors[[gene]]
         interactors_list <- interactors_list[interactors_list %in% nodes$name]
         for (interactor in interactors_list) {
           if (gene != interactor) {

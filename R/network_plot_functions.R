@@ -26,8 +26,8 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
     nodes <- c(nodes, gene)
     
     # Find the interactors of the gene that are also among the top selected genes
-    if (gene %in% names(interactors$as.matrix.interactors.)) {
-      gene_interactors <- interactors$as.matrix.interactors.[[gene]]
+    if (gene %in% names(interactors$gene_interactors)) {
+      gene_interactors <- interactors$gene_interactors[[gene]]
       gene_interactors <- gene_interactors[gene_interactors %in% top_gene_list]
       
       if (mutated_interactors) {

@@ -378,7 +378,21 @@ server <- function(input, output, session) {
     create_pan_cancer_position_plot(pan_cancer_results, input$gene)
   })
   
-  
+  output$download_pan_cancer <- downloadHandler(
+    filename = function() {
+      paste("pan_cancer_ranking_", input$dataframe_subset, ".xlsx", sep = "")
+    },
+    content = function(file) {
+      # Generate the pan-cancer ranking data
+      pan_cancer_results <- pan_cancer_ranking(data, input$dataframe_subset)
+      
+      # Ensure the data exists
+      req(nrow(pan_cancer_results) > 0)
+      
+      # Write to an Excel file
+      openxlsx::write.xlsx(pan_cancer_results,file)
+    }
+  ) 
   
 }
 

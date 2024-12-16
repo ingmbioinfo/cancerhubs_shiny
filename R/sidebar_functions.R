@@ -22,7 +22,8 @@ createSidebar <- function() {
           DTOutput("ranking_table"),
           tableOutput("gene_info_table"),
           downloadButton("download_plot", "Download Plot (PDF)"),
-          downloadButton("download_ranking_table", "Download Ranking Table (XLSX)")
+          downloadButton("download_ranking_table", "Download Ranking Table (XLSX)"),
+          downloadButton("download_pan_cancer", "Download Pan-Cancer Ranking (XLSX)")
         ),
         conditionalPanel(
           condition = "input.tabSelected === 'Common Genes'",

@@ -70,6 +70,13 @@ ui <- fluidPage(
     createSidebar(),
     createMainPanel()
   ),
+  div(
+    class = "footer",
+    style = "position: fixed; bottom: 0; width: 100%; background: #f5f9fc; text-align: center; padding: 8px;",
+    HTML(
+      "N.B.: This app relies on mutational data that do not account for Copy Number Variations. Consequently, neither the network score-based rankings nor the pan-cancer score considers them."
+    )
+  )
 )
 # Server logic
 server <- function(input, output, session) {

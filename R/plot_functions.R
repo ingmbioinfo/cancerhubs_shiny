@@ -52,7 +52,7 @@ create_pan_cancer_position_plot <- function(pan_cancer_results, gene) {
         y = NULL
       ) +
       coord_cartesian(xlim = c(-20, 120)) +
-      scale_x_continuous(limits = c(0, 100), expand = c(0, 0), breaks = seq(0, 100, by = 25)) +
+      scale_x_continuous(limits = c(-20, 120), expand = c(0, 0), breaks = seq(0, 100, by = 25)) +
       scale_y_continuous(limits = c(0.98, 1.02)) +  # Reduce the height of the y-axis
       theme_void() +
       theme(

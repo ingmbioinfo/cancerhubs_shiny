@@ -36,7 +36,7 @@ createSidebar <- function() {
           downloadButton("download_high_res", "Download High-Resolution Heatmap"),
           br(),
           br(),
-          downloadButton("download_extracted_data", "Download Extracted Data (XLSX)"),
+          downloadButton("download_extracted_data", "Download Extracted Data (XLSX)")
         ),
         conditionalPanel(
           condition = "input.tabSelected === 'Network Plot'",
@@ -46,10 +46,29 @@ createSidebar <- function() {
           br(), br(),
           h4("Edges Table"),
           DTOutput("edges_table"),
-          downloadButton("download_network_edges", "Download Edges Table (XLSX)"),
-          
+          downloadButton("download_network_edges", "Download Edges Table (XLSX)")
+        ),
+        conditionalPanel(
+          condition = "input.tabSelected === 'About Us'",
+          div(
+            class = "logo-container",
+            style = "text-align: center; margin: 10px;",
+            img(src = "cancerhubs_logo.png", height = "250px", style = "max-width: 100%;", alt = "CancerHubs Logo"),
+            br(),
+            h4(style = "text-align: center; color: #1B4F72; font-weight: bold; margin-top: 20px;", "RELATED LINKS "),
+            tags$ul(
+              style = "list-style-type: none; padding: 0; text-align: center;",
+              tags$li(tags$a(href = "https://academic.oup.com/bib/article/26/1/bbae635/7918695", target = "_blank", 
+                             style = "color: #0073e6; text-decoration: none; font-size: 14px;", "CancerHubs paper on Briefings in Bioinformatics")),
+              tags$li(tags$a(href = "https://github.com/ingmbioinfo/cancerhubs", target = "_blank", 
+                             style = "color: #0073e6; text-decoration: none; font-size: 14px;", "Updated CancerHubs Directory")),
+              tags$li(tags$a(href = "https://github.com/ingmbioinfo/cancerhubs_shiny", target = "_blank", 
+                             style = "color: #0073e6; text-decoration: none; font-size: 14px;", "Updated App Directory")),
+              tags$li(tags$a(href = "https://github.com/ingmbioinfo/cancerhubs_paper", target = "_blank", 
+                             style = "color: #0073e6; text-decoration: none; font-size: 14px;", "CancerHubs Directory as Published in the Paper"))
+            )
+          )
         )
     )
   )
 }
-

@@ -1,4 +1,4 @@
-<img src="cancerhubs_logo.png" align="right" alt="" width="200" />
+<img src="www/cancerhubs_logo.png" align="right" alt="" width="200" />
 
 
 # CancerHubs Data Explorer

@@ -1,4 +1,3 @@
-
 # Use the official R base image
 FROM rocker/shiny:latest
 
@@ -12,8 +11,7 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean
 
 # Install R packages required by the app
-RUN R -e "install.packages(c('shiny', 'cowplot', 'ggplot2', 'openxlsx', 'DT', 'purrr', 'igraph', 'plotly', 'RColorBrewer'
-, 'dplyr', 'tidyr'), dependencies=TRUE)"
+RUN R -e "install.packages(c('shiny', 'cowplot', 'ggplot2', 'openxlsx', 'DT', 'purrr', 'igraph', 'plotly', 'RColorBrewer', 'dplyr', 'tidyr'), dependencies=TRUE)"
 
 # Copy the application files to the Docker image
 WORKDIR /srv/shiny-server

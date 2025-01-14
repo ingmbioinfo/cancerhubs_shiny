@@ -1,4 +1,3 @@
-# Use the official R base image
 FROM rocker/shiny:latest
 
 # Install system dependencies
@@ -8,6 +7,7 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libfontconfig1-dev \
     libxt-dev \
+    libglpk40 \
     && apt-get clean
 
 # Install R packages required by the app

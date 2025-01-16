@@ -24,4 +24,4 @@ COPY . .
 EXPOSE 3838
 
 # Run the Shiny app on a fixed port and make it accessible externally
-CMD ["R", "-e", "shiny::runApp('/srv/shiny-server', port = 3838, host = '0.0.0.0')"]
+CMD ["R", "-e", "shiny::runApp('/srv/shiny-server', port = 3838, host = '127.0.0.1')"]

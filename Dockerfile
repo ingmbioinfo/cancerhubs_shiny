@@ -16,12 +16,14 @@ RUN apt-get update && apt-get install -y \
 RUN R -e "install.packages(c('shiny', 'cowplot', 'ggplot2', 'openxlsx', 'DT', 'purrr', 'igraph', 'plotly', 'RColorBrewer', 'dplyr', 'tidyr'), dependencies=TRUE)"
 RUN R -e "install.packages('RPostgreSQL', dependencies=TRUE)"
 
-# Copy the application files to the Docker image
+# Copy all app files into the container
+COPY . /srv/shiny-server/
+
+# Set the working directory for subsequent commands
 WORKDIR /srv/shiny-server
-COPY . .
 
 # Expose the fixed Shiny server port
 EXPOSE 3838
 
 # Run the Shiny app on a fixed port and make it accessible externally
-CMD ["R", "-e", "shiny::runApp('/srv/shiny-server', port = 3838, host = '127.0.0.1')"]
+CMD ["R", "-e", "shiny::runApp('/srv/shiny-server', port = 3838)"]

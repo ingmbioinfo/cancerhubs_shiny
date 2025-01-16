@@ -1,3 +1,4 @@
+# Use the official R base image
 FROM rocker/shiny:latest
 
 # Install system dependencies
@@ -19,8 +20,8 @@ RUN R -e "install.packages('RPostgreSQL', dependencies=TRUE)"
 WORKDIR /srv/shiny-server
 COPY . .
 
-# Expose the Shiny server port
+# Expose the fixed Shiny server port
 EXPOSE 3838
 
-# Run the Shiny app
-CMD ["R", "-e", "shiny::runApp('/srv/shiny-server')"]
+# Run the Shiny app on a fixed port and make it accessible externally
+CMD ["R", "-e", "shiny::runApp('/srv/shiny-server', port = 3838, host = '0.0.0.0')"]

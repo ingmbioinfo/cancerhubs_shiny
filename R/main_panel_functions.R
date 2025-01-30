@@ -13,7 +13,13 @@ createMainPanel <- function() {
           tabPanel("Common Genes", value = "Common Genes",
                    uiOutput("category_tabs"),
                    DTOutput("extraction_view"),
-                   plotlyOutput("heatmap_output", height = "800px")
+                   plotlyOutput("heatmap_output", height = "800px"),
+                   div(style = "display: flex; align-items: center; margin-top: 10px;",
+                       div(style = "background-color: pink; width: 20px; height: 20px; margin-right: 5px;"),
+                       span("Not Present"),
+                       div(style = "background-color: #0A9396; width: 20px; height: 20px; margin-left: 20px; margin-right: 5px;"),
+                       span("Present")
+                   )
           ),
           tabPanel("Network Plot", value = "Network Plot",
                    fluidRow(

@@ -108,7 +108,7 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
       x = c(layout[v1, "x"], layout[v2, "x"]),
       y = c(layout[v1, "y"], layout[v2, "y"]),
       z = c(layout[v1, "z"], layout[v2, "z"]),
-      line = list(width = 1, color = "gray"),
+      line = list(width = 0.2, color = "gray", opacity=0.3),
       hoverinfo = "none",
       showlegend = FALSE  # Hide edge traces from legend
     )

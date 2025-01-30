@@ -65,6 +65,7 @@ create_presence_matrix_per_category <- function(extracted_data) {
   return(combined_presence_df)
 }
 
+
 create_category_heatmaps <- function(gene_presence_df, top_n = 50, num_cancers = 1) {
   heatmaps <- list()
   
@@ -88,29 +89,63 @@ create_category_heatmaps <- function(gene_presence_df, top_n = 50, num_cancers =
     long_data <- top_n_data %>%
       pivot_longer(cols = -c(Gene, Category, TotalPresence), names_to = "CancerType", values_to = "Presence")
     
-    # Convert 'Presence' to a factor with levels "Present" and "Not Present"
-    long_data$Presence <- factor(long_data$Presence, levels = c(0, 1), labels = c("Not Present", "Present"))
+    # Convert 'Presence' to numeric for Plotly
+    long_data$Presence <- as.numeric(long_data$Presence)
     
     # Ensure genes are ordered by TotalPresence in the heatmap
     long_data$Gene <- factor(long_data$Gene, levels = top_n_data$Gene)
     
-    # Create the heatmap
-    heatmap <- ggplot(long_data, aes(x = CancerType, y = Gene, fill = Presence)) +
-      geom_tile(color = "white") +
-      scale_fill_manual(values = c("Not Present" = "pink", "Present" = "#0A9396")) +
-      labs(title = paste("Gene Presence in", category),
-           x = "Cancer Type",
-           y = "Gene",
-           fill = "Presence") +  # Ensure the fill is labeled as "Presence"
-      theme_minimal() +
-      theme(axis.text.y = element_text(size = 6),
-            axis.text.x = element_text(angle = 45, hjust = 1),
-            legend.position = "bottom")  # Adjust legend position if needed
+    # Create the heatmap using Plotly
+    heatmap <- plot_ly(
+      data = long_data,
+      x = ~CancerType,
+      y = ~Gene,
+      z = ~Presence,
+      type = 'heatmap',
+      colors = c('pink', '#0A9396'),
+      text = ~paste("Gene:", Gene, "<br>Presence:", ifelse(Presence == 1, "Present", "Not Present")),
+      hoverinfo = 'text',
+      showscale = FALSE
+    ) %>%
+      layout(
+        title = paste("Gene Presence in", category),
+        xaxis = list(title = "Cancer Type", tickangle = 45),
+        yaxis = list(title = "Gene", tickfont = list(size = 6)),
+        margin = list(t = 50)
+      )
+    
+    grid_lines <- list()
+    
+    # Add horizontal grid lines, offset by 0.5
+    for (i in seq_along(unique(long_data$Gene))) {
+      grid_lines <- append(grid_lines, list(
+        list(type = "line",
+             xref = "paper", yref = "y",
+             x0 = 0, x1 = 1, y0 = i - 0.5, y1 = i - 0.5,
+             line = list(color = "white", width = 1))
+      ))
+    }
+    
+    # Add vertical grid lines, offset by 0.5
+    for (i in seq_along(unique(long_data$CancerType))) {
+      grid_lines <- append(grid_lines, list(
+        list(type = "line",
+             xref = "x", yref = "paper",
+             x0 = i - 0.5, x1 = i - 0.5, y0 = 0, y1 = 1,
+             line = list(color = "white", width = 1))
+      ))
+    }
+    
+    
+    heatmap <- heatmap %>%
+      layout(shapes = grid_lines)
+    
     
     heatmaps[[category]] <- heatmap
   }
   
   return(heatmaps)
 }
+
 
 

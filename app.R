@@ -63,19 +63,21 @@ ui <- fluidPage(
   ),
   
   titlePanel(
-    div(class = "title-panel", "CancerHubs Data Explorer")
+    div(
+      class = "title-panel", "CancerHubs Data Explorer")
   ),
   
   sidebarLayout(
     createSidebar(),
     createMainPanel()
-  ),
-  div(
+  ),  div(
     class = "footer",
     style = "position: fixed; bottom: 0; width: 100%; background: #f5f9fc; text-align: center; padding: 8px;",
     HTML(
       "N.B.: This app relies on mutational data that do not account for Copy Number Variations. Consequently, neither the network score-based rankings nor the pan-cancer score considers them."
-    )
+      
+    ) 
+    
   )
 )
 # Server logic
@@ -277,14 +279,18 @@ server <- function(input, output, session) {
   # Event to extract genes and prepare data for download
   extracted_data_reactive <- reactive({
     req(input$num_lines, input$num_cancers,input$selected_dataframe)  # Ensure parameters are provided
+    
+    
     n <- input$num_lines
     num_cancers <- input$num_cancers
     top_lines <- extract_top_n_lines(data, n)  # Assuming this function is defined elsewhere
     
     # Use the modified function to get common genes
     common_genes <- get_common_genes_across_cancers(top_lines, num_cancers, selection = input$selected_dataframe)
+
     
-    # Return the common genes data
+    
+     # Return the common genes data
     return(common_genes)
   })
   
@@ -296,31 +302,63 @@ server <- function(input, output, session) {
     selected_df(input$selected_dataframe)
   })
   
+
+  
   # Reactive expression to run the analysis
   analysis_result <- reactive( {
+    
+    start_time = Sys.time()
+    
     req(input$num_lines,input$num_cancers)
     # Assuming 'data' is available in your app's environment
     extracted_data <- extract_top_n_genes(data, input$num_lines)
     gene_presence_df <- create_presence_matrix_per_category(extracted_data)
     heatmaps <- create_category_heatmaps(gene_presence_df, top_n = input$num_lines,num_cancers = input$num_cancers)
+    
+    
+    end_time <- Sys.time()  # End timer
+    
+    # Compute elapsed time
+    elapsed_time <- end_time - start_time
+    message(paste("Analysis completed in", round(elapsed_time, 2), "seconds"))
+    
     return(heatmaps)
   })
   
+  
+  
   output$heatmap_output <- renderPlotly({
     req(analysis_result())
-    heatmaps <- analysis_result()
     
-    # Validate selected dataframe
+    heatmaps <- analysis_result()
     selected <- selected_df()
     req(selected %in% names(heatmaps))
     
-    # Extract and validate heatmap
     heatmap <- heatmaps[[selected]]
     req(heatmap)
     
-    # Convert ggplot to plotly
-    ggplotly(heatmap)
+    plotly_heatmap <- heatmap
+    
+    
+    plotly_heatmap
   })
+  
+  
+  # Provide download for the extracted data as XLSX
+  output$download_extracted_data <- downloadHandler(
+    filename = function() {
+      paste("Extracted_Genes_", Sys.Date(), ".xlsx", sep = "")
+    },
+    content = function(file) {
+      selected_df <- extracted_data_reactive()
+      req(selected_df)
+      
+      # Write each subset as a sheet in the Excel file
+      write.xlsx(selected_df, file)
+    }
+  )
+  
+  
   
   output$download_high_res <- downloadHandler(
     filename = function() {
@@ -340,6 +378,9 @@ server <- function(input, output, session) {
   output$network_plot <- renderPlotly({
     req(input$network_tumor, input$network_dataset_type, input$network_color_by)
     
+    # Time the ggplotly conversion
+    start_time <- Sys.time()
+    
     # Generate the Plotly plot
     plot <- plot_tumor_network(data, interactors, 
                                tumor = input$network_tumor, 
@@ -358,22 +399,15 @@ server <- function(input, output, session) {
           scale = 3        # Scale factor for resolution
         )
       )
+    end_time <- Sys.time()
+    
+    message(paste("network generation took", round(end_time - start_time, 2), "seconds"))
+    
+    plot
+    
   })
   
-  
-  # Provide download for the extracted data as XLSX
-  output$download_extracted_data <- downloadHandler(
-    filename = function() {
-      paste("Extracted_Genes_", Sys.Date(), ".xlsx", sep = "")
-    },
-    content = function(file) {
-      selected_df <- extracted_data_reactive()
-      req(selected_df)
-      
-      # Write each subset as a sheet in the Excel file
-      write.xlsx(selected_df, file)
-    }
-  )
+
   
   output$pan_cancer_gene_position <- renderPlot({
     req(input$gene, input$dataframe_subset)  # Ensure inputs are provided

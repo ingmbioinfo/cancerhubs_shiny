@@ -114,6 +114,8 @@ server <- function(input, output, session) {
     }
   )
   
+  #RANKING
+  
   # Reactive function to calculate rankings for the selected gene
   get_gene_ranking_reactive <- reactive({
     req(input$gene, input$dataframe_subset)
@@ -127,13 +129,15 @@ server <- function(input, output, session) {
   
   # Reactive function to calculate rankings for the selected gene
   pan_cancer_ranking_reactive <- reactive({
-    req(input$df)
+    req(input$dataframe_subset)
     
     # Get the ranking data
-    pan_cancer_results<- pan_cancer(data,input$df)
+    pan_cancer_results<- pan_cancer_ranking(data,input$dataframe_subset)
     
     return(pan_cancer_results)
   })
+  
+  
   # Render the plot for gene rankings
   output$ranking_plot <- renderPlot({
     rankings <- get_gene_ranking_reactive()
@@ -159,21 +163,45 @@ server <- function(input, output, session) {
       paste(input$gene, "_ranking_plot.pdf", sep = "")
     },
     content = function(file) {
-      rankings <- get_gene_ranking_reactive()
-      rankings <- pan_cancer_ranking_reactive()
-      ranking_plot <- create_ranking_plot(rankings, input$gene, input$dataframe_subset)
+      
+      # Ensure required inputs are available
+      req(input$gene)
+      req(input$dataframe_subset)
+      
+      
+      # Retrieve data
+      gene_rankings <- get_gene_ranking_reactive()
+      
+      
+      # Retrieve pan_cancer_results
+      
+      pan_cancer_results <- tryCatch({
+        pan_cancer_ranking_reactive()
+      }, error = function(e) {
+        message("ERROR: pan_cancer_ranking_reactive() failed: ", e$message)
+        return(NULL)
+      })
+      
+      if (is.null(pan_cancer_results)) {
+        message("ERROR: pan_cancer_results is NULL. Stopping execution.")
+        return(NULL)
+      }
+      
+      
+      # Generate the plots
+      ranking_plot <- create_ranking_plot(gene_rankings, input$gene, input$dataframe_subset)
       pan_cancer_plot <- create_pan_cancer_position_plot(pan_cancer_results, input$gene)
       
-      # Combine the plots using cowplot
-      combined_plot <- plot_grid(
-        ranking_plot,
-        pan_cancer_plot,
-        ncol = 1,  # Stack the plots vertically
-        align = "v"
-      )
+      ranking_plot <- ranking_plot + theme(plot.margin = margin(t = 130, r = 0, b = 100, l = 5, unit = "pt")) + guides(color = guide_legend(nrow = 3))
+      pan_cancer_plot <- pan_cancer_plot + theme(plot.margin = margin(t = 0, r = 50, b = 75, l = 0, unit = "pt"))
       
-      # Save to PDF
-      ggsave(file, plot = combined_plot, device = 'pdf', width = 8, height = 12)
+      
+      
+      # Combine the plots using cowplot
+      combined_plot <- plot_grid(ranking_plot, pan_cancer_plot, ncol = 1, align = "v", rel_heights = c(4, 1), rel_widths = c(1, 7))
+      
+      ggsave(file, plot = combined_plot, device = "pdf", width = 8, height = 12)
+      
     }
   )
   
@@ -186,6 +214,9 @@ server <- function(input, output, session) {
       write.xlsx(get_gene_ranking_reactive(), file)
     }
   )
+  
+  
+  #NETWORK
   
   # Reactive to fetch nodes and edges data for the network plot
   network_data <- reactive({
@@ -273,6 +304,9 @@ server <- function(input, output, session) {
     plot.new()
   })
   
+  
+  #COMMON GENES
+  
   # Reactive value to store the selected dataframe
   selected_df <- reactiveVal("All_Genes")
   
@@ -339,6 +373,15 @@ server <- function(input, output, session) {
     
     plotly_heatmap <- heatmap
     
+    plotly_heatmap %>%
+      config(
+        toImageButtonOptions = list(
+          format = "svg",  # Format can be png, jpeg, etc.
+          width = NULL,      # Even higher width for higher resolution
+          height = NULL      # Scale factor for resolution
+        )
+      )
+    
     
     plotly_heatmap
   })
@@ -359,20 +402,6 @@ server <- function(input, output, session) {
   )
   
   
-  
-  output$download_high_res <- downloadHandler(
-    filename = function() {
-      paste("heatmap_high_res", Sys.Date(), ".png", sep = "")
-    },
-    content = function(file) {
-      heatmaps <- analysis_result()
-      selected <- selected_df()
-      req(selected %in% names(heatmaps))
-      heatmap <- heatmaps[[selected]]
-      
-      ggsave(file, plot = heatmap, device = "png", width = 12, height = 8, dpi = 300)
-    }
-  )
   
   
   output$network_plot <- renderPlotly({
@@ -399,6 +428,7 @@ server <- function(input, output, session) {
           scale = 3        # Scale factor for resolution
         )
       )
+
     end_time <- Sys.time()
     
     message(paste("network generation took", round(end_time - start_time, 2), "seconds"))

@@ -18,7 +18,11 @@ createMainPanel <- function() {
                        div(style = "background-color: pink; width: 20px; height: 20px; margin-right: 5px;"),
                        span("Not Present"),
                        div(style = "background-color: #0A9396; width: 20px; height: 20px; margin-left: 20px; margin-right: 5px;"),
-                       span("Present")
+                       span("Present"),
+                       br(),
+                       br(),
+                       br(),
+                       br()
                    )
           ),
           tabPanel("Network Plot", value = "Network Plot",

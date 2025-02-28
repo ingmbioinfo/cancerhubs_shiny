@@ -33,9 +33,6 @@ createSidebar <- function() {
                       selected = "All_Genes"),
           numericInput("num_cancers", "Min. Presence in Tumors:", value = 2),
           br(),
-          downloadButton("download_high_res", "Download High-Resolution Heatmap"),
-          br(),
-          br(),
           downloadButton("download_extracted_data", "Download Extracted Data (XLSX)")
         ),
         conditionalPanel(

@@ -215,6 +215,32 @@ server <- function(input, output, session) {
     }
   )
   
+  output$pan_cancer_gene_position <- renderPlot({
+    req(input$gene, input$dataframe_subset)  # Ensure inputs are provided
+    
+    # Calculate pan-cancer ranking
+    pan_cancer_results <- pan_cancer_ranking(data = data, df = input$dataframe_subset)
+    
+    # Create the plot using the new function
+    create_pan_cancer_position_plot(pan_cancer_results, input$gene)
+  })
+  
+  output$download_pan_cancer <- downloadHandler(
+    filename = function() {
+      paste("pan_cancer_ranking_", input$dataframe_subset, ".xlsx", sep = "")
+    },
+    content = function(file) {
+      # Generate the pan-cancer ranking data
+      pan_cancer_results <- pan_cancer_ranking(data, input$dataframe_subset)
+      
+      # Ensure the data exists
+      req(nrow(pan_cancer_results) > 0)
+      
+      # Write to an Excel file
+      openxlsx::write.xlsx(pan_cancer_results,file)
+    }
+  ) 
+  
   
   #NETWORK
   
@@ -302,6 +328,39 @@ server <- function(input, output, session) {
   # Render the network legend
   output$network_legend_plot <- renderPlot({
     plot.new()
+  })
+  
+  output$network_plot <- renderPlotly({
+    req(input$network_tumor, input$network_dataset_type, input$network_color_by)
+    
+    # Time the ggplotly conversion
+    start_time <- Sys.time()
+    
+    # Generate the Plotly plot
+    plot <- plot_tumor_network(data, interactors, 
+                               tumor = input$network_tumor, 
+                               dataset_type = input$network_dataset_type, 
+                               top_n = input$network_top_n, 
+                               mutated_interactors = input$network_mutated_interactors, 
+                               color_by = input$network_color_by)
+    
+    # Add custom configuration for higher resolution
+    plot %>%
+      config(
+        toImageButtonOptions = list(
+          format = "png",  # Format can be png, jpeg, etc.
+          width = 2880,    # Increase width for higher resolution
+          height = 1620,   # Increase height for higher resolution
+          scale = 3        # Scale factor for resolution
+        )
+      )
+    
+    end_time <- Sys.time()
+    
+    message(paste("network generation took", round(end_time - start_time, 2), "seconds"))
+    
+    plot
+    
   })
   
   
@@ -401,69 +460,9 @@ server <- function(input, output, session) {
     }
   )
   
-  
-  
-  
-  output$network_plot <- renderPlotly({
-    req(input$network_tumor, input$network_dataset_type, input$network_color_by)
-    
-    # Time the ggplotly conversion
-    start_time <- Sys.time()
-    
-    # Generate the Plotly plot
-    plot <- plot_tumor_network(data, interactors, 
-                               tumor = input$network_tumor, 
-                               dataset_type = input$network_dataset_type, 
-                               top_n = input$network_top_n, 
-                               mutated_interactors = input$network_mutated_interactors, 
-                               color_by = input$network_color_by)
-    
-    # Add custom configuration for higher resolution
-    plot %>%
-      config(
-        toImageButtonOptions = list(
-          format = "png",  # Format can be png, jpeg, etc.
-          width = 2880,    # Increase width for higher resolution
-          height = 1620,   # Increase height for higher resolution
-          scale = 3        # Scale factor for resolution
-        )
-      )
-
-    end_time <- Sys.time()
-    
-    message(paste("network generation took", round(end_time - start_time, 2), "seconds"))
-    
-    plot
-    
-  })
-  
 
   
-  output$pan_cancer_gene_position <- renderPlot({
-    req(input$gene, input$dataframe_subset)  # Ensure inputs are provided
-    
-    # Calculate pan-cancer ranking
-    pan_cancer_results <- pan_cancer_ranking(data = data, df = input$dataframe_subset)
-    
-    # Create the plot using the new function
-    create_pan_cancer_position_plot(pan_cancer_results, input$gene)
-  })
-  
-  output$download_pan_cancer <- downloadHandler(
-    filename = function() {
-      paste("pan_cancer_ranking_", input$dataframe_subset, ".xlsx", sep = "")
-    },
-    content = function(file) {
-      # Generate the pan-cancer ranking data
-      pan_cancer_results <- pan_cancer_ranking(data, input$dataframe_subset)
-      
-      # Ensure the data exists
-      req(nrow(pan_cancer_results) > 0)
-      
-      # Write to an Excel file
-      openxlsx::write.xlsx(pan_cancer_results,file)
-    }
-  ) 
+
   
 }
 

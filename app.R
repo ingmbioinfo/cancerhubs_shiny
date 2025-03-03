@@ -93,6 +93,10 @@ server <- function(input, output, session) {
       return(data.frame())  # Return an empty dataframe if not available
     }
     
+    df$mut_int_percentage <- round((df$mut_int / df$tot_int * 100),2)
+    
+    df = df[, c("gene_list","mutation","precog_metaZ","tot_int", "mut_int", "mut_int_percentage", "network_score")]
+    
     return(df)
   })
   
@@ -314,16 +318,6 @@ server <- function(input, output, session) {
     }
   )
   
-  # Render the network plot
-  output$network_plot <- renderPlotly({
-    req(input$network_tumor)
-    req(input$network_dataset_type)
-    req(input$network_color_by)
-    
-    # Call the plot_tumor_network function to generate the plotly object
-    plot_tumor_network(data, interactors, tumor = input$network_tumor, dataset_type = input$network_dataset_type, 
-                       top_n = input$network_top_n, mutated_interactors = input$network_mutated_interactors, color_by = input$network_color_by)
-  })
   
   # Render the network legend
   output$network_legend_plot <- renderPlot({

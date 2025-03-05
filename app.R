@@ -9,6 +9,7 @@ library(plotly)
 library(RColorBrewer)
 library(dplyr)
 library(tidyr)
+library(shinycssloaders)
 
 # Source the styles and functions from the R subdirectory
 source("R/data.R")

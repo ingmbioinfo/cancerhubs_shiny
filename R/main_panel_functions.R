@@ -13,7 +13,7 @@ createMainPanel <- function() {
           tabPanel("Common Genes", value = "Common Genes",
                    uiOutput("category_tabs"),
                    DTOutput("extraction_view"),
-                   plotlyOutput("heatmap_output", height = "800px"),
+                   plotlyOutput("heatmap_output", height = "800px") %>% withSpinner(color = "#0A9396"),
                    div(style = "display: flex; align-items: center; margin-top: 10px;",
                        div(style = "background-color: pink; width: 20px; height: 20px; margin-right: 5px;"),
                        span("Not Present"),
@@ -33,7 +33,7 @@ createMainPanel <- function() {
                      column(3, numericInput("network_top_n", "Number of Top Genes:", value = 10, min = 1)),
                      column(3, checkboxInput("network_mutated_interactors", "Include Only Mutated Interactors", value = TRUE))
                    ),
-                   plotlyOutput("network_plot", height = "600px"),
+                   plotlyOutput("network_plot", height = "600px") %>% withSpinner(color = "#0A9396"),
                    br()
           ),
           tabPanel("About Us", value = "About Us",

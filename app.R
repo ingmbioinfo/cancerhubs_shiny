@@ -21,6 +21,7 @@ source("R/plot_functions.R")
 source("R/network_plot_functions.R")  # Load the new network plot function
 source("R/common_genes_function.R")
 source("R/heatmaps_functions.R")
+source("R/gene_network.R")
 
 # Define UI (Make sure cancerhubs_style is available here)
 ui <- fluidPage(
@@ -455,8 +456,83 @@ server <- function(input, output, session) {
     }
   )
   
-
+  output$network_legend_plot <- renderPlot({
+    plot.new()
+  })
   
+  output$gene_network <- renderPlot({
+    req(input$network_tumor, input$gene,input$data_type_precog, input$gene)
+    
+    # Time the ggplotly conversion
+    start_time <- Sys.time()
+    
+    # Generate the Plotly plot
+    plot <- create_network(data = gene_interactors, 
+                               original = data,
+                               cancer_type = input$network_tumor,
+                               gene = input$gene, 
+                               int_type =input$data_type_precog,
+                               include_mutated = input$g_network_mutated_interactors,
+                               crosses = input$cross)
+    
+    end_time <- Sys.time()
+    
+    total = end_time - start_time
+    print(total)
+  })
+  
+  output$downloadGeneNetwork <- downloadHandler(
+    filename = function() {
+      paste("gene_network_plot_", Sys.Date(), ".pdf", sep = "")
+    },
+    content = function(file) {
+      # Generate the igraph object using create_network
+      g <- create_network(data = gene_interactors, original = data,
+                          cancer_type = input$network_tumor, gene = input$gene, 
+                          int_type = input$data_type_precog,include_mutated = input$g_network_mutated_interactors,
+                          crosses = input$cross)
+      
+      # Check if the plot is an igraph object
+        pdf(file, width = 10, height = 8)  # Open a PDF graphics device
+        
+        # Apply your custom plotting parameters
+        plot(g,
+             vertex.size = 10, vertex.label.cex = 1,
+             vertex.color = ifelse(V(g)$name == input$gene, "pink", "#83C9C8"),
+             vertex.frame.color = ifelse(V(g)$name == input$gene, "pink", "#83C9C8"),
+             vertex.label.color = "black",vertex.label.font = 2,
+             main = paste("Top50 Interactors of", input$gene))
+        
+        dev.off()  # Close the graphics device
+      
+    }
+  )
+  
+  
+  
+  
+  
+  
+  selected_file_link <- reactiveVal(NULL)
+  
+  # Observe event when user selects parameters
+  observe( {
+    link <- get_file_link(input$network_tumor, input$data_type_precog, input$g_network_mutated_interactors)
+    selected_file_link(link)
+  })
+  
+  # Download handler
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      basename(selected_file_link())  # Extracts file name from URL
+    },
+    content = function(file) {
+      if (is.null(selected_file_link())) {
+        stop("No file selected.")
+      }
+      download.file(selected_file_link(), file, mode = "wb")  # Download the file
+    }
+  )
 
   
 }

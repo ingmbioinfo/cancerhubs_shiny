@@ -7,7 +7,7 @@ createMainPanel <- function() {
                    DTOutput("data_view")
           ),
           tabPanel("Gene Ranking", value = "Gene Ranking",
-                   plotOutput("ranking_plot", height = "570px"), 
+                   plotOutput("ranking_plot", height = "570px") %>% withSpinner(color = "#0A9396"), 
                    plotOutput("pan_cancer_gene_position", height = "85px")
           ),
           tabPanel("Common Genes", value = "Common Genes",

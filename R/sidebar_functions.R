@@ -27,7 +27,10 @@ createSidebar <- function() {
         ),
         conditionalPanel(
           condition = "input.tabSelected === 'Common Genes'",
-          numericInput("num_lines", "Number of Top genes:", value = 50),
+          h4("Parameters selection"),
+          p('The selection feature enables you to identify the number of genes shared across various tumors among the "TOP" ranking genes, based on their Network score'),
+          p ('Additionally, you can apply a cut-off to select genes that appear in the TOP positions of (at least) the number of  cancers specified in "Minimum Presence in Tumors"'),
+          numericInput("num_lines", "Number of TOP genes:", value = 50),
           selectInput("selected_dataframe", "Choose Dataframe to View:", 
                       choices = c("All_Genes","PRECOG", "Non_PRECOG", "Only_PRECOG"), 
                       selected = "All_Genes"),
@@ -44,6 +47,17 @@ createSidebar <- function() {
           h4("Edges Table"),
           DTOutput("edges_table"),
           downloadButton("download_network_edges", "Download Edges Table (XLSX)")
+        ),
+        conditionalPanel(
+          condition = "input.tabSelected === 'Gene_Network'", 
+          h4("Network selection"), 
+          p('In the central panel you can search your interest gene and see its top50 interactors with the highest Network Scores in a selected tumor'),
+          br(),
+          h4("Downloads"), 
+          p('Here you can download the network plot but also the whole dataset of interactions for ALL genes based on your "Select Tumor", "Select Dataset Type", and "Include Only Mutated Interactors" choices'), # Add the formal text
+          br(),
+          downloadButton("downloadData", "Download Tables (XLSX)"),
+          downloadButton("downloadGeneNetwork", "Download Network (PDF)")
         ),
         conditionalPanel(
           condition = "input.tabSelected === 'About Us'",

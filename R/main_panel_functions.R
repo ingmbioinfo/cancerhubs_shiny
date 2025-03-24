@@ -36,6 +36,17 @@ createMainPanel <- function() {
                    plotlyOutput("network_plot", height = "600px") %>% withSpinner(color = "#0A9396"),
                    br()
           ),
+          tabPanel("Gene_Network", value = "Gene_Network",
+                   fluidRow(
+                     column(3, selectInput("network_tumor", "Select Tumor:", choices = names(data))),
+                     column(3, selectInput("data_type_precog", "Select Dataset Type:", choices = c("Interactors", "Precog Interactors"))),
+                     column(3, textInput("gene", "Enter Gene Name:", value = "TP53")),
+                     column(3, checkboxInput("g_network_mutated_interactors", "Include Only Mutated Interactors", value = TRUE)),
+                     column(3, checkboxInput("cross", "Show all the interactions", value = FALSE))
+                   ),
+                   plotOutput("gene_network", width = "800px", height = "800px") %>% withSpinner(color = "#0A9396"),
+                   br()
+          ),
           tabPanel("About Us", value = "About Us",
                    h3("Contact"),
                    p("For questions or support, please contact:"),
@@ -55,6 +66,7 @@ createMainPanel <- function() {
                    h3("Funding"),
                    p("This research was funded by Associazione Italiana per la Ricerca sul Cancro (AIRC), under MFAG 2021 ID 26178 project to Nicola Manfrini.")
           )
+          
         )
     )
   )

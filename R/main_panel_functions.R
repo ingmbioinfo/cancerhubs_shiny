@@ -26,26 +26,25 @@ createMainPanel <- function() {
                    )
           ),
           tabPanel("Network Plot", value = "Network Plot",
-                   fluidRow(
-                     column(3, selectInput("network_tumor", "Select Tumor:", choices = names(data))),
-                     column(3, selectInput("network_dataset_type", "Select Dataset Type:", choices = c("All_Genes", "PRECOG", "Non_PRECOG", "Only_PRECOG"))),
-                     column(3, selectInput("network_color_by", "Color by:", choices = c("network_score", "precog_metaZ"))),
-                     column(3, numericInput("network_top_n", "Number of Top Genes:", value = 10, min = 1)),
-                     column(3, checkboxInput("network_mutated_interactors", "Include Only Mutated Interactors", value = TRUE))
-                   ),
+                   br(),
+                   br(),
                    plotlyOutput("network_plot", height = "600px") %>% withSpinner(color = "#0A9396"),
                    br()
           ),
-          tabPanel("Gene_Network", value = "Gene_Network",
-                   fluidRow(
-                     column(3, selectInput("network_tumor", "Select Tumor:", choices = names(data))),
-                     column(3, selectInput("data_type_precog", "Select Dataset Type:", choices = c("Interactors", "Precog Interactors"))),
-                     column(3, textInput("gene", "Enter Gene Name:", value = "TP53")),
-                     column(3, checkboxInput("g_network_mutated_interactors", "Include Only Mutated Interactors", value = TRUE)),
-                     column(3, checkboxInput("cross", "Show all the interactions", value = FALSE))
-                   ),
+          tabPanel("Gene_Network", value = "Gene Network",
                    plotOutput("gene_network", width = "800px", height = "800px") %>% withSpinner(color = "#0A9396"),
-                   br()
+                   br(),
+                   div(
+                     style ="display: flex; align-items: center; margin-top: -40px;",  # Add spacing between the graph and the legend
+                     div(style = "background-color: pink; width: 20px; height: 20px; margin-right: 5px; border-radius: 50% ;"),
+                     span("Input Gene"),
+                     div(style = "background-color: #83C9C8; width: 20px; height: 20px; margin-left: 20px; margin-right: 5px;border-radius: 50% ;"),
+                     span("Node with Network Score"),
+                     div(style = "background-color: #C9E8E7; width: 20px; height: 20px; margin-left: 20px; margin-right: 5px;border-radius: 50%;"),
+                     span("Node with Network Score equal to 0"),
+                     br(),br(),br(),br(),
+                     )
+                   
           ),
           tabPanel("About Us", value = "About Us",
                    h3("Contact"),

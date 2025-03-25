@@ -120,6 +120,9 @@ server <- function(input, output, session) {
     }
   )
   
+  
+  
+  
   #RANKING
   
   # Reactive function to calculate rankings for the selected gene
@@ -248,6 +251,8 @@ server <- function(input, output, session) {
   ) 
   
   
+  
+  
   #NETWORK
   
   # Reactive to fetch nodes and edges data for the network plot
@@ -360,6 +365,9 @@ server <- function(input, output, session) {
   })
   
   
+  
+  
+  
   #COMMON GENES
   
   # Reactive value to store the selected dataframe
@@ -460,6 +468,8 @@ server <- function(input, output, session) {
     plot.new()
   })
   
+  #GENE NETWORK
+  
   output$gene_network <- renderPlot({
     req(input$network_tumor, input$gene,input$data_type_precog, input$gene)
     
@@ -474,6 +484,8 @@ server <- function(input, output, session) {
                                int_type =input$data_type_precog,
                                include_mutated = input$g_network_mutated_interactors,
                                crosses = input$cross)
+    
+    
     
     end_time <- Sys.time()
     
@@ -498,20 +510,27 @@ server <- function(input, output, session) {
         # Apply your custom plotting parameters
         plot(g,
              vertex.size = 10, vertex.label.cex = 1,
-             vertex.color = ifelse(V(g)$name == input$gene, "pink", "#83C9C8"),
-             vertex.frame.color = ifelse(V(g)$name == input$gene, "pink", "#83C9C8"),
+             vertex.color = V(g)$color,
+             vertex.frame.color = V(g)$color,
              vertex.label.color = "black",vertex.label.font = 2,
              main = paste("Top50 Interactors of", input$gene))
+        legend(
+          x = 0.2, y = -1,
+          legend = c(input$gene,"Interactors with Network Score", "Interactors with Network Score equal to 0"),
+          col = c( "pink","#83C9C8", "#C9E8E7"),
+          pch = 21,
+          pt.bg = c("pink","#83C9C8", "#C9E8E7"),
+          pt.cex = 2,
+          bty = "n",
+          xpd = TRUE  # Allow the legend to be drawn outside the plot region
+        )
         
         dev.off()  # Close the graphics device
       
     }
   )
   
-  
-  
-  
-  
+
   
   selected_file_link <- reactiveVal(NULL)
   

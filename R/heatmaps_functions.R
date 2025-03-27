@@ -69,6 +69,7 @@ create_presence_matrix_per_category <- function(extracted_data) {
 create_category_heatmaps <- function(gene_presence_df, top_n = 50, num_cancers = 1) {
   heatmaps <- list()
   
+  print(unique(gene_presence_df$Category))
   for (category in unique(gene_presence_df$Category)) {
     category_data <- gene_presence_df %>% filter(Category == category)
     
@@ -80,6 +81,9 @@ create_category_heatmaps <- function(gene_presence_df, top_n = 50, num_cancers =
     filtered_data <- category_data %>%
       filter(TotalPresence >= num_cancers) %>%
       arrange(desc(TotalPresence), Gene) # Sort by TotalPresence, then alphabetically
+    
+    nrow(filtered_data)
+    print(filtered_data)
     
     # Limit to top N genes after filtering
     top_n_data <- head(filtered_data, top_n)
@@ -94,6 +98,11 @@ create_category_heatmaps <- function(gene_presence_df, top_n = 50, num_cancers =
     
     # Ensure genes are ordered by TotalPresence in the heatmap
     long_data$Gene <- factor(long_data$Gene, levels = top_n_data$Gene)
+    
+    print("longdata_gene")
+    print(length(long_data$Gene))
+    
+    if(length(long_data$Gene) == 0)  next
     
     # Create the heatmap using Plotly
     heatmap <- plot_ly(

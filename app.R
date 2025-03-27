@@ -56,6 +56,11 @@ ui <- fluidPage(
         background-color: %s;
         color: white;
       }
+      .shiny-output-error-validation {
+        color: #AD2727; text-align: center;
+        font-size: 18px;margin-top: 300px;
+      }
+
     ",
                             cancerhubs_style$background,
                             cancerhubs_style$primary_text,
@@ -152,7 +157,7 @@ server <- function(input, output, session) {
     rankings <- get_gene_ranking_reactive()
     
     if (nrow(rankings) == 0) {
-      plot(1, type = "n", xlab = "", ylab = "", main = "Gene not found in any tumor type")
+      validate(need(FALSE,paste(input$gene, "is not present in this dataset!\n Please select a different dataset or gene.")))
     } else {
       create_ranking_plot(rankings, input$gene, input$dataframe_subset)
     }
@@ -230,8 +235,16 @@ server <- function(input, output, session) {
     # Calculate pan-cancer ranking
     pan_cancer_results <- pan_cancer_ranking(data = data, df = input$dataframe_subset)
     
+    print("pan_cancer")
+    str(pan_cancer_results)
+    
+    validate(need(input$gene %in% pan_cancer_results$gene_list, 
+                  paste0("Error: Gene '", input$gene, "' not found in the dataset! Please check the spelling or try another gene.")))
+    
     # Create the plot using the new function
     create_pan_cancer_position_plot(pan_cancer_results, input$gene)
+    
+    
   })
   
   output$download_pan_cancer <- downloadHandler(
@@ -255,9 +268,11 @@ server <- function(input, output, session) {
   
   #NETWORK
   
+  
   # Reactive to fetch nodes and edges data for the network plot
   network_data <- reactive({
     req(input$network_tumor, input$network_dataset_type)
+    
     
     tumor_data <- data[[input$network_tumor]][[input$network_dataset_type]]
     top_genes <- head(tumor_data[order(-tumor_data$network_score), ], input$network_top_n)
@@ -334,6 +349,19 @@ server <- function(input, output, session) {
   output$network_plot <- renderPlotly({
     req(input$network_tumor, input$network_dataset_type, input$network_color_by)
     
+    top_n <- input$network_top_n
+    if (top_n > 50) {
+      top_n <- 50
+      showNotification(type = "warning", duration = 15,  
+                       closeButton = TRUE,  # Show close button
+                       ui = tags$div(
+                         style = "font-size: 18px; padding: 20px; border-radius: 5px;",
+                         "The output was limited to the top 50 genes."))
+    } else if (top_n < 1) {
+      top_n <- 1
+      showNotification("The output was limited to the top 1 gene.", type = "warning")
+    }
+    
     # Time the ggplotly conversion
     start_time <- Sys.time()
     
@@ -341,7 +369,7 @@ server <- function(input, output, session) {
     plot <- plot_tumor_network(data, interactors, 
                                tumor = input$network_tumor, 
                                dataset_type = input$network_dataset_type, 
-                               top_n = input$network_top_n, 
+                               top_n = top_n, 
                                mutated_interactors = input$network_mutated_interactors, 
                                color_by = input$network_color_by)
     
@@ -429,9 +457,12 @@ server <- function(input, output, session) {
     
     heatmaps <- analysis_result()
     selected <- selected_df()
-    req(selected %in% names(heatmaps))
+    
+    if (is.null(heatmaps[[selected]]) == TRUE) {validate( need(FALSE, paste("No genes found in", selected, "with your selection! \n Please change dataset or tumor count")))}
     
     heatmap <- heatmaps[[selected]]
+  
+    
     req(heatmap)
     
     plotly_heatmap <- heatmap
@@ -471,7 +502,7 @@ server <- function(input, output, session) {
   #GENE NETWORK
   
   output$gene_network <- renderPlot({
-    req(input$network_tumor, input$gene,input$data_type_precog, input$gene)
+    req(input$network_tumor, input$gene_sel,input$data_type_precog)
     
     # Time the ggplotly conversion
     start_time <- Sys.time()
@@ -480,7 +511,7 @@ server <- function(input, output, session) {
     plot <- create_network(data = gene_interactors, 
                                original = data,
                                cancer_type = input$network_tumor,
-                               gene = input$gene, 
+                               gene = input$gene_sel, 
                                int_type =input$data_type_precog,
                                include_mutated = input$g_network_mutated_interactors,
                                crosses = input$cross)
@@ -500,7 +531,7 @@ server <- function(input, output, session) {
     content = function(file) {
       # Generate the igraph object using create_network
       g <- create_network(data = gene_interactors, original = data,
-                          cancer_type = input$network_tumor, gene = input$gene, 
+                          cancer_type = input$network_tumor, gene = input$gene_sel, 
                           int_type = input$data_type_precog,include_mutated = input$g_network_mutated_interactors,
                           crosses = input$cross)
       
@@ -513,10 +544,10 @@ server <- function(input, output, session) {
              vertex.color = V(g)$color,
              vertex.frame.color = V(g)$color,
              vertex.label.color = "black",vertex.label.font = 2,
-             main = paste("Top50 Interactors of", input$gene))
+             main = paste("Top50 Interactors of", input$gene_sel))
         legend(
           x = 0.2, y = -1,
-          legend = c(input$gene,"Interactors with Network Score", "Interactors with Network Score equal to 0"),
+          legend = c(input$gene_sel,"Interactors with Network Score", "Interactors with Network Score equal to 0"),
           col = c( "pink","#83C9C8", "#C9E8E7"),
           pch = 21,
           pt.bg = c("pink","#83C9C8", "#C9E8E7"),

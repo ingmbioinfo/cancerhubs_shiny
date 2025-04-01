@@ -22,6 +22,7 @@ source("R/network_plot_functions.R")  # Load the new network plot function
 source("R/common_genes_function.R")
 source("R/heatmaps_functions.R")
 source("R/gene_network.R")
+source("R/gene_network_download.R")
 
 # Define UI (Make sure cancerhubs_style is available here)
 ui <- fluidPage(
@@ -101,6 +102,7 @@ server <- function(input, output, session) {
     }
     
     df$mut_int_percentage <- round((df$mut_int / df$tot_int * 100),2)
+    df$network_score = round(df$network_score,2)
     
     df = df[, c("gene_list","mutation","precog_metaZ","tot_int", "mut_int", "mut_int_percentage", "network_score")]
     
@@ -157,7 +159,7 @@ server <- function(input, output, session) {
     rankings <- get_gene_ranking_reactive()
     
     if (nrow(rankings) == 0) {
-      validate(need(FALSE,paste(input$gene, "is not present in this dataset!\n Please select a different dataset or gene.")))
+      validate(need(FALSE,paste(input$gene, "is not present in this dataset!\n Please check the spelling or select a different dataset type")))
     } else {
       create_ranking_plot(rankings, input$gene, input$dataframe_subset)
     }
@@ -186,6 +188,13 @@ server <- function(input, output, session) {
       # Retrieve data
       gene_rankings <- get_gene_ranking_reactive()
       
+      if (nrow(gene_rankings) == 0) {
+        validate(need(FALSE, showNotification(type = "error", duration = 15,  
+                                              closeButton = TRUE,  # Show close button
+                                              ui = tags$div(
+                                                style = "font-size: 18px; padding: 20px; border-radius: 5px;",
+                                                "No data available for this gene."))))
+      }
       
       # Retrieve pan_cancer_results
       
@@ -225,9 +234,20 @@ server <- function(input, output, session) {
       paste(input$gene, "_ranking_table.xlsx", sep = "")
     },
     content = function(file) {
-      write.xlsx(get_gene_ranking_reactive(), file)
+      rankings <- get_gene_ranking_reactive()  # Fetch the rankings
+      if (nrow(rankings) == 0) {
+        validate(need(FALSE, showNotification(type = "error", duration = 15,  
+                                              closeButton = TRUE,  # Show close button
+                                              ui = tags$div(
+                                                style = "font-size: 18px; padding: 20px; border-radius: 5px;",
+                                                "No data available for this gene."))))
+      } else {
+        # Write the rankings to the file
+        write.xlsx(rankings, file)
+      }
     }
   )
+  
   
   output$pan_cancer_gene_position <- renderPlot({
     req(input$gene, input$dataframe_subset)  # Ensure inputs are provided
@@ -236,10 +256,8 @@ server <- function(input, output, session) {
     pan_cancer_results <- pan_cancer_ranking(data = data, df = input$dataframe_subset)
     
     print("pan_cancer")
-    str(pan_cancer_results)
     
-    validate(need(input$gene %in% pan_cancer_results$gene_list, 
-                  paste0("Error: Gene '", input$gene, "' not found in the dataset! Please check the spelling or try another gene.")))
+    validate(need(input$gene %in% pan_cancer_results$gene_list,""))
     
     # Create the plot using the new function
     create_pan_cancer_position_plot(pan_cancer_results, input$gene)
@@ -266,7 +284,7 @@ server <- function(input, output, session) {
   
   
   
-  #NETWORK
+  # NETWORK
   
   
   # Reactive to fetch nodes and edges data for the network plot
@@ -285,6 +303,7 @@ server <- function(input, output, session) {
       mutation = top_genes$mutation,
       stringsAsFactors = FALSE
     )
+    
     edges <- list()
     for (gene in nodes$name) {
       if (gene %in% names(interactors$gene_interactors)) {
@@ -298,27 +317,21 @@ server <- function(input, output, session) {
       }
     }
     edges_df <- do.call(rbind, edges)
+    
+    
+    if (is.null(edges_df)) {
+      showNotification(type = "error", "No data available!", duration = 15)
+      return(NULL) # This will stop the execution and return NULL
+    }
+    
     edges_df <- as.data.frame(edges_df, stringsAsFactors = FALSE)
     colnames(edges_df) <- c("from", "to")
+    
     
     list(nodes = nodes, edges = edges_df)
   })
   
-  # Display nodes table
-  output$nodes_table <- renderDT({
-    nodes <- network_data()$nodes
-    req(nrow(nodes) > 0)  # Ensure there is at least one row before rendering
-    
-    datatable(nodes, options = list(pageLength = 10, scrollX = TRUE))
-  })
-  
-  # Display edges table
-  output$edges_table <- renderDT({
-    edges <- network_data()$edges
-    req(nrow(edges) > 0)  # Ensure there is at least one row before rendering
-    
-    datatable(edges, options = list(pageLength = 10, scrollX = TRUE))
-  })
+
   
   # Provide download for the edges table as XLSX
   output$download_network_edges <- downloadHandler(
@@ -335,9 +348,9 @@ server <- function(input, output, session) {
     filename = function() {
       paste(input$network_tumor, '_', input$network_dataset_type, "_nodes.xlsx", sep = "")
     },
-    content = function(file) {
-      write.xlsx(network_data()$nodes, file)
+    content = function(file) {write.xlsx(network_data()$nodes, file)
     }
+    
   )
   
   
@@ -357,9 +370,9 @@ server <- function(input, output, session) {
                        ui = tags$div(
                          style = "font-size: 18px; padding: 20px; border-radius: 5px;",
                          "The output was limited to the top 50 genes."))
-    } else if (top_n < 1) {
-      top_n <- 1
-      showNotification("The output was limited to the top 1 gene.", type = "warning")
+    } else if (top_n < 2) {
+      top_n <- 2
+      showNotification("Top genes too low, Top 2 genes are shown.", type = "warning", duration = 15)
     }
     
     # Time the ggplotly conversion
@@ -435,7 +448,23 @@ server <- function(input, output, session) {
     start_time = Sys.time()
     
     req(input$num_lines,input$num_cancers)
-    # Assuming 'data' is available in your app's environment
+    
+    if (input$num_lines > 89) {
+      showNotification(type = "warning", duration = 15,  
+                       closeButton = TRUE,  # Show close button
+                       ui = tags$div(
+                         style = "font-size: 15px; padding: 15px; border-radius: 5px;",
+                         tags$p(
+                           'The number of extracted lines is higher than 90, the visualization may be affected!', 
+                           tags$br(),
+                           'Complete data is still available for download.'
+                         )
+                       ))}
+    
+   if (input$num_lines < 1) {validate(
+      need(FALSE, "Please select a valid number of genes!")
+    )}
+    
     extracted_data <- extract_top_n_genes(data, input$num_lines)
     gene_presence_df <- create_presence_matrix_per_category(extracted_data)
     heatmaps <- create_category_heatmaps(gene_presence_df, top_n = input$num_lines,num_cancers = input$num_cancers)
@@ -458,7 +487,7 @@ server <- function(input, output, session) {
     heatmaps <- analysis_result()
     selected <- selected_df()
     
-    if (is.null(heatmaps[[selected]]) == TRUE) {validate( need(FALSE, paste("No genes found in", selected, "with your selection! \n Please change dataset or tumor count")))}
+    if (is.null(heatmaps[[selected]]) == TRUE) {validate( need(FALSE, paste("No genes found in", selected, "with your selection! \n Please change dataset or tumor count.")))}
     
     heatmap <- heatmaps[[selected]]
   
@@ -499,13 +528,20 @@ server <- function(input, output, session) {
     plot.new()
   })
   
-  #GENE NETWORK
+  # GENE NETWORK
   
   output$gene_network <- renderPlot({
     req(input$network_tumor, input$gene_sel,input$data_type_precog)
     
     # Time the ggplotly conversion
     start_time <- Sys.time()
+    
+    if (input$data_type_precog == "Only MUTATED (Not Precog)" & input$g_network_mutated_interactors == FALSE) {
+      showNotification(type = "message", duration = 15,  
+                     closeButton = TRUE,  # Show close button
+                     ui = tags$div(
+                       style = "font-size: 15px; padding: 15px; border-radius: 5px;",
+                       'All interactors are mutated by default in "only MUTATED"'))}
     
     # Generate the Plotly plot
     plot <- create_network(data = gene_interactors, 
@@ -530,13 +566,25 @@ server <- function(input, output, session) {
     },
     content = function(file) {
       # Generate the igraph object using create_network
-      g <- create_network(data = gene_interactors, original = data,
-                          cancer_type = input$network_tumor, gene = input$gene_sel, 
-                          int_type = input$data_type_precog,include_mutated = input$g_network_mutated_interactors,
-                          crosses = input$cross)
+      g <- tryCatch(
+        {create_network(data = gene_interactors, original = data,
+                       cancer_type = input$network_tumor, gene = input$gene_sel, 
+                       int_type = input$data_type_precog,include_mutated = input$g_network_mutated_interactors,
+                       crosses = input$cross)},
+        error = function(e) {
+          showNotification("Error: Data could not be generated.", type = "error")
+          return(NULL)  # Return NULL on error
+          }
+      ) 
+      
+      
       
       # Check if the plot is an igraph object
         pdf(file, width = 10, height = 8)  # Open a PDF graphics device
+        
+        if (is.null(g)) {
+          stop("Error: No data to plot.")
+        }
         
         # Apply your custom plotting parameters
         plot(g,
@@ -546,12 +594,13 @@ server <- function(input, output, session) {
              vertex.label.color = "black",vertex.label.font = 2,
              main = paste("Top50 Interactors of", input$gene_sel))
         legend(
-          x = 0.2, y = -1,
+          x = 0.6, y = -1,
           legend = c(input$gene_sel,"Interactors with Network Score", "Interactors with Network Score equal to 0"),
           col = c( "pink","#83C9C8", "#C9E8E7"),
           pch = 21,
           pt.bg = c("pink","#83C9C8", "#C9E8E7"),
-          pt.cex = 2,
+          pt.cex = 1,
+          cex = 0.7,
           bty = "n",
           xpd = TRUE  # Allow the legend to be drawn outside the plot region
         )
@@ -571,7 +620,7 @@ server <- function(input, output, session) {
     selected_file_link(link)
   })
   
-  # Download handler
+  # Download link
   output$downloadData <- downloadHandler(
     filename = function() {
       basename(selected_file_link())  # Extracts file name from URL
@@ -581,6 +630,48 @@ server <- function(input, output, session) {
         stop("No file selected.")
       }
       download.file(selected_file_link(), file, mode = "wb")  # Download the file
+    }
+  )
+  
+  gene_data <- reactive({
+    req(input$gene_sel, input$network_tumor, input$data_type_precog)  # Ensure input is provided
+    
+    data_result <- tryCatch(
+      {
+        Get_gene_interactors(
+          data = gene_interactors, 
+          original = data,
+          cancer_type = input$network_tumor, 
+          gene = input$gene_sel, 
+          int_type = input$data_type_precog,
+          include_mutated = input$g_network_mutated_interactors
+        )
+      },
+      error = function(e) {
+        showNotification("Error: Data could not be generated.", type = "error")
+        return(NULL)  # Return NULL on error
+      }
+    )
+    
+    validate(
+      need(!is.null(data_result), "No data available for download.")
+    )
+    
+    return(data_result)
+  })
+  
+  output$downloadGeneTable <- downloadHandler(
+    filename = function() {
+      paste("Gene_Interactors_", input$gene_sel, ".xlsx", sep = "")
+    },
+    content = function(file) {
+      data_list <- gene_data()
+      
+      str(data_list)
+      
+      validate(need(!is.null(data_list), "No data available for download."))
+      
+      write.xlsx(data_list, file = file)
     }
   )
 

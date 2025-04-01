@@ -13,7 +13,7 @@ createMainPanel <- function() {
           tabPanel("Common Genes", value = "Common Genes",
                    uiOutput("category_tabs"),
                    DTOutput("extraction_view"),
-                   div(style = "display: flex; justify-content: center; width: 100%;",
+                   div(style = "display: flex; justify-content: space-evenly;",
                        plotlyOutput("heatmap_output", height = "800px") %>% withSpinner(color = "#0A9396")),
                    div(style = "display: flex; align-items: center; margin-top: 10px;",
                        div(style = "background-color: pink; width: 20px; height: 20px; margin-right: 5px;"),
@@ -29,7 +29,8 @@ createMainPanel <- function() {
           tabPanel("Network Plot", value = "Network Plot",
                    br(),
                    br(),
-                   plotlyOutput("network_plot", height = "600px") %>% withSpinner(color = "#0A9396"),
+                   div(style = "display: flex; justify-content: center; width: 100%;",
+                       plotlyOutput("network_plot", height = "600px") %>% withSpinner(color = "#0A9396")),
                    textOutput("top_n_feedback"),
                    br()
           ),

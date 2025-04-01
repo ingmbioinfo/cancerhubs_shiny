@@ -32,10 +32,13 @@ get_gene_ranking <- function(gene_name, subset_df, data) {
       ))
     }
   }
-  str(rankings)
+  
   
   # Order rankings by rank for y-axis reordering
   rankings <- rankings[order(rankings$Rank), ]
+  
+  
+  
   rankings
 }
 
@@ -53,9 +56,6 @@ pan_cancer_ranking <- function(data, df = 'All_Genes') {
   merged_df$score <- 100 * merged_df$score / max(merged_df$score)
   rownames(merged_df) <- 1:nrow(merged_df)
   
-  if (nrow(merged_df) == 0) {
-    validate(need(FALSE,paste(gene, "is not present in this dataset!\n Please select a different dataset or gene.")))
-  }
   
   return(merged_df)
 }

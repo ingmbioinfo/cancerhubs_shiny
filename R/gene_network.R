@@ -10,11 +10,11 @@ create_network <- function(data, original, cancer_type, int_type, gene, include_
     stop("Invalid cancer type")
   }
   
-  if (int_type %in% c("ALL", "Only MUTATED")) {
+  if (int_type %in% c("ALL", "Only MUTATED (Not Precog)")) {
     
     sel_data <- cancer_data[["inter"]]
     
-    if (int_type == "Only MUTATED") {
+    if (int_type == "Only MUTATED (Not Precog)") {
       selection <- "mutated_interactors"
     } else {
       selection <- ifelse(include_mutated, "mutated_interactors", "total_interactors")
@@ -22,20 +22,20 @@ create_network <- function(data, original, cancer_type, int_type, gene, include_
     
     print(paste("Selected Column:", selection))
     
-    if (int_type == "Only MUTATED") {
+    if (int_type == "Only MUTATED (Not Precog)") {
       tumor_data <- original[[cancer_type]][["Non_PRECOG"]]
     } else {
       tumor_data <- original[[cancer_type]][["All_Genes"]]
     }
     
-    str(tumor_data)
     
     
-    if (int_type == "Only MUTATED"){
+    if (int_type == "Only MUTATED (Not Precog)"){
       print("only_mut active")
       
       sel_data =sel_data[sel_data$gene_list %in% tumor_data$gene_list,]
     }
+    
     
     interactors_gene <- sel_data[sel_data$gene_list == gene, selection]
     
@@ -44,15 +44,17 @@ create_network <- function(data, original, cancer_type, int_type, gene, include_
     }
     
     if (length(interactors_gene) == 0) {
-      validate(need(FALSE,paste(gene, "is not present in this dataset!\n Please select a different dataset or tumor.")))
+      validate(need(FALSE,paste(gene, "is not present in this dataset!\n Please check the spelling or select a different tumor/dataset type.")))
     }
     
     # Extract interactors
     interactors <- unlist(interactors_gene)
     
-    print(length(interactors))
-    print(dim(tumor_data))
-    print(head(tumor_data$gene_list))
+    if (length(interactors) == 0) {
+      validate(need(FALSE,paste(gene, "has no interactors in this dataset.\n Please select a different tumor or dataset type.")))
+    }
+  
+  
     
     complete_data <- tumor_data[tumor_data$gene_list %in% interactors, ]
     
@@ -86,7 +88,7 @@ create_network <- function(data, original, cancer_type, int_type, gene, include_
     
   } 
   
-   if (int_type == "Only PRECOG"){
+   if (int_type == "PRECOG"){
     
     tumor_data <- original[[cancer_type]][["PRECOG"]]
     
@@ -108,6 +110,10 @@ create_network <- function(data, original, cancer_type, int_type, gene, include_
     # Extract interactors
     interactors <- unlist(interactors_gene)
     print(length(interactors))
+    
+    if (length(interactors) == 0) {
+      validate(need(FALSE,paste(gene, "has no interactors in this dataset.\n Please select a different gene or dataset.")))
+    }
     
     complete_data <- tumor_data[tumor_data$gene_list %in% interactors, ]
     
@@ -236,165 +242,27 @@ create_network <- function(data, original, cancer_type, int_type, gene, include_
 
 #retrive excel
 get_file_link <- function(dataframe, int_type, include_mutated) {
+  
+  int_type_part <- if (int_type == "PRECOG") {
+    "precog"
+  } else if (int_type == "ALL") {
+    "all_genes"
+  } else if (int_type == "Only MUTATED (Not Precog)") {
+    "only_mut"
+  } else {
+    stop("Invalid int_type value")
+  }
+  
+  
+  mutated_part <- if (int_type != "Only MUTATED (Not Precog)" && include_mutated) "_mut" else ""
+  
   file_name <- paste0("https://github.com/ingmbioinfo/cancerhubs/raw/main/result/interactions_download/",
                       dataframe, "_",
-                      ifelse(int_type == "Precog Interactors", "precog", "all_genes"),
-                      ifelse(include_mutated, "_mut", ""),
+                      int_type_part,
+                      mutated_part,
                       ".xlsx"
   )
   return(file_name)
 }
 
-
-#single gene interactors
-
-get_gene_interactors= function(data, original, cancer_type, int_type, gene, include_mutated = TRUE) {
-  
-  # Extract the relevant cancer data
-  cancer_data <- data[[cancer_type]]
-  
-  if (int_type == "All Interactors") {
-    
-    sel_data <- cancer_data[["inter"]]
-    selection <- ifelse(include_mutated, "mutated_interactors", "total_interactors")
-    
-    print(paste("Selected Column:", selection))
-    
-    interactors_gene <- sel_data[sel_data$gene_list == gene, selection]
-    
-    if (length(interactors_gene) == 0) {
-      stop("Gene not found")
-    }
-    interactors <- unlist(interactors_gene)
-    
-    print(length(interactors))
-    
-    tumor_data <- original[[cancer_type]][["All_Genes"]]
-    
-    complete_data <- tumor_data[tumor_data$gene_list %in% interactors, ]
-    
-    # Create a dataframe for missing interactors
-    missing_interactors <- setdiff(interactors, tumor_data$gene_list)
-    
-    if (length(missing_interactors) > 0) {
-      placeholder_data <- data.frame(
-        gene_list  = missing_interactors,
-        network_score = 0
-      )
-      
-      # Add NA for all other columns dynamically
-      placeholder_data[setdiff(names(tumor_data), names(placeholder_data))] <- NA
-      
-      # Filter tumor data for existing interactors
-      filtered_data <- tumor_data[tumor_data$gene_list %in% interactors, ]
-      
-      # Combine filtered data with placeholder data
-      complete_data <- rbind(filtered_data, placeholder_data)
-      
-      # Sort by network score in descending order
-      sorted_data <- complete_data[order(-complete_data$network_score), ]
-      
-      interactors <- sorted_data$gene_list
-      
-    }
-    
-    
-  } else {
-    
-    sel_data <- cancer_data[["precog_inter"]]
-    selection <- ifelse(include_mutated, "precog_mut", "precog")
-    
-    print(paste("Selected Column:", selection))
-    
-    interactors_gene <- sel_data[sel_data$genes == gene, selection]
-    
-    if (!(selection %in% names(sel_data))) {
-      stop("Selected column does not exist in the dataset")
-    }
-    
-    if (length(interactors_gene) == 0) {
-      stop("Gene not found")
-    }
-    
-    # Extract interactors
-    interactors <- unlist(interactors_gene)
-    
-    tumor_data <- original[[cancer_type]][["PRECOG"]]
-    
-    complete_data <- tumor_data[tumor_data$gene_list %in% interactors, ]
-    
-    # Create a dataframe for missing interactors
-    missing_interactors <- setdiff(interactors, tumor_data$gene_list)
-    
-    if (length(missing_interactors) > 0) {
-      placeholder_data <- data.frame(
-        gene_list = missing_interactors,
-        network_score = 0
-      )
-      
-      # Add NA for all other columns dynamically
-      placeholder_data[setdiff(names(tumor_data), names(placeholder_data))] <- NA
-      
-      # Filter tumor data for existing interactors
-      filtered_data <- tumor_data[tumor_data$gene_list %in% interactors, ]
-      complete_data <- rbind(filtered_data, placeholder_data)
-    }
-    
-    # Sort by network score in descending order
-    sorted_data <- complete_data[order(-complete_data$network_score), ]
-    
-    interactors <- sorted_data$gene_list
-  }
-  
-  # Create network edges
-  edges <- data.frame(
-    from = gene,
-    to = interactors
-  )
-  
-  
-  additional_edges <- data.frame(from = character(), to = character(), stringsAsFactors = FALSE)
-  
-  for (i in seq_along(interactors)) {
-    interactor_i <- interactors[i]
-    
-    column_name <- ifelse("gene_list" %in% colnames(sel_data), "gene_list", "genes")
-    
-    
-    # Get interactors of interactor_i
-    interactor_data <- sel_data[sel_data[[column_name]] == interactor_i, selection]
-    
-    if (length(interactor_data) > 0) {
-      interactor_neighbors <- unlist(interactor_data)
-      shared_interactors <- intersect(interactor_neighbors, interactors)
-      
-      if (length(shared_interactors) > 0) {
-        new_edges <- data.frame(from = pmin(interactor_i, shared_interactors), 
-                                to = pmax(interactor_i, shared_interactors))
-        additional_edges <- rbind(additional_edges, new_edges)
-      }
-    }
-  }
-  
-  # Remove duplicate edges
-  additional_edges <- unique(additional_edges)
-  
-  # Combine all edges
-  edges <- unique(rbind(edges, additional_edges))
-  print(paste("Edges before:", nrow(edges)))
-  
-  # Sort each edge and remove duplicates
-  edges <- data.frame(
-    from = pmin(edges$from, edges$to),  # Always take the smaller value for 'from'
-    to = pmax(edges$from, edges$to)    # Always take the larger value for 'to'
-  )
-  
-  # Remove duplicate edges
-  edges <- unique(edges)
-  
-  print(paste("Edges after:", nrow(edges)))
-  
-  edges <- edges[edges$from != edges$to, ]
-
-}
 

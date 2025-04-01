@@ -12,6 +12,7 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
   # Extract data for the selected tumor and dataset type
   tumor_data <- data[[tumor]][[dataset_type]]
   
+  
   # Select the top N genes based on network_score
   top_genes <- head(tumor_data[order(-tumor_data$network_score), ], top_n)
   top_gene_list <- top_genes$gene_list
@@ -19,6 +20,7 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
   # Initialize the graph without the central tumor node
   nodes <- c()
   edges <- list()
+  
   
   # Add the top genes as nodes
   for (i in seq_len(nrow(top_genes))) {
@@ -45,11 +47,13 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
       }
     }
   }
+
   
   # Create an igraph object from the nodes and edges
   if (length(edges) == 0) {
-    stop("No edges available to create a graph")
+    validate( need (FALSE, "The selected top genes for this tumor do not interact with each other.\n Please select more genes or change the dataset"))
   }
+  
   edges_matrix <- do.call(rbind, edges)
   g <- graph_from_edgelist(edges_matrix, directed = FALSE)
   V(g)$label <- V(g)$name
@@ -69,6 +73,7 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
     V(g)$color <- metaz_colors
   }
   
+  
   # Add attributes for PRECOG and mutation status to determine shape and size
   precog_status <- ifelse(V(g)$name %in% top_genes$gene_list[top_genes$precog_metaZ >= 1.96 | top_genes$precog_metaZ <= -1.96], "PRECOG", "Non-PRECOG")
   mutation_status <- top_genes$mutation[match(V(g)$name, top_genes$gene_list)]
@@ -85,6 +90,8 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
   layout <- as.data.frame(layout)
   rownames(layout) <- V(g)$name
   colnames(layout) <- c("x", "y", "z")
+  
+  
   
   # Create data frame for plotly
   plot_data <- data.frame(
@@ -113,6 +120,7 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
       showlegend = FALSE  # Hide edge traces from legend
     )
   }
+  
   
   # Define node trace
   node_trace <- list(
@@ -143,6 +151,7 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
     showlegend = FALSE  # Hide node traces from legend
   )
   
+  
   # Create the plotly figure
   fig <- plot_ly()
   for (edge_trace in edge_traces) {
@@ -169,6 +178,7 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
     hoverinfo = node_trace$hoverinfo,
     showlegend = node_trace$showlegend
   )
+  
   
   # Add annotations for shape and size legends (higher, closer to colorbar)
   fig <- fig %>% layout(

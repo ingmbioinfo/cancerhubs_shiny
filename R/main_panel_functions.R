@@ -34,7 +34,7 @@ createMainPanel <- function() {
                    textOutput("top_n_feedback"),
                    br()
           ),
-          tabPanel("Gene_Network", value = "Gene Network",
+          tabPanel("Gene Network", value = "Gene Network",
                    plotOutput("gene_network", width = "800px", height = "800px") %>% withSpinner(color = "#0A9396"),
                    br(),
                    div(

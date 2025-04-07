@@ -10,15 +10,12 @@ create_network <- function(data, original, cancer_type, int_type, gene, include_
     stop("Invalid cancer type")
   }
   
-  if (int_type %in% c("ALL", "Only MUTATED (Not Precog)")) {
+  if (int_type %in% c("All Genes", "Only MUTATED (Not Precog)")) {
     
     sel_data <- cancer_data[["inter"]]
     
-    if (int_type == "Only MUTATED (Not Precog)") {
-      selection <- "mutated_interactors"
-    } else {
-      selection <- ifelse(include_mutated, "mutated_interactors", "total_interactors")
-    }
+    
+    selection <- ifelse(include_mutated, "mutated_interactors", "total_interactors")
     
     print(paste("Selected Column:", selection))
     
@@ -88,14 +85,24 @@ create_network <- function(data, original, cancer_type, int_type, gene, include_
     
   } 
   
-   if (int_type == "PRECOG"){
+   if (int_type %in% c("PRECOG (Mutated or Not)", "Only PRECOG (Not Mutated)")){
+     
+     sel_data <- cancer_data[["precog_inter"]]
+     selection <- ifelse(include_mutated, "precog_mut", "precog")
+     
+     print(paste("Selected Column:", selection))
+     
+     if (int_type == "Only PRECOG (Not Mutated)") {
+       tumor_data <- original[[cancer_type]][["Only_PRECOG"]]
+     } else {
+       tumor_data <- original[[cancer_type]][["PRECOG"]]
+     }
     
-    tumor_data <- original[[cancer_type]][["PRECOG"]]
-    
-    sel_data <- cancer_data[["precog_inter"]]
-    selection <- ifelse(include_mutated, "precog_mut", "precog")
-    
-    print(paste("Selected Column:", selection))
+     if (int_type == "Only PRECOG (Not Mutated)"){
+       print("only_precog active")
+       
+       sel_data =sel_data[sel_data$genes %in% tumor_data$gene_list,]
+     }
     
     interactors_gene <- sel_data[sel_data$genes == gene, selection]
     
@@ -243,18 +250,17 @@ create_network <- function(data, original, cancer_type, int_type, gene, include_
 #retrive excel
 get_file_link <- function(dataframe, int_type, include_mutated) {
   
-  int_type_part <- if (int_type == "PRECOG") {
+  int_type_part <- if (int_type == "PRECOG (Mutated or Not)") {
     "precog"
-  } else if (int_type == "ALL") {
+  } else if (int_type == "All Genes") {
     "all_genes"
   } else if (int_type == "Only MUTATED (Not Precog)") {
-    "only_mut"
-  } else {
-    stop("Invalid int_type value")
+    "only_mutated"
+  } else if (int_type =="Only PRECOG (Not Mutated)") { "only_precog"
   }
   
   
-  mutated_part <- if (int_type != "Only MUTATED (Not Precog)" && include_mutated) "_mut" else ""
+  mutated_part <- if (include_mutated) "_mut" else ""
   
   file_name <- paste0("https://github.com/ingmbioinfo/cancerhubs/raw/main/result/interactions_download/",
                       dataframe, "_",

@@ -4,22 +4,22 @@ Get_gene_interactors <- function(data, original, cancer_type, int_type, gene, in
   if (is.null(cancer_data)) stop("Invalid cancer type")
   
   # Select the correct interaction column
-  int_col <- if (int_type %in% c("ALL", "Only MUTATED (Not Precog)")) {
-    if (int_type == "Only MUTATED (Not Precog)") "mutated_interactors" else if (include_mutated) "mutated_interactors" else "total_interactors"
+  int_col <- if (int_type %in% c("All Genes", "Only MUTATED (Not Precog)")) {
+     if (include_mutated) "mutated_interactors" else "total_interactors"
   } else {
     if (include_mutated) "precog_mut" else "precog"
   }
   
   # Select the correct dataset
-  sel_data <- if (int_type %in% c("ALL", "Only MUTATED (Not Precog)")) cancer_data[["inter"]] else cancer_data[["precog_inter"]]
-  tumor_data <- original[[cancer_type]][[if (int_type %in% c("ALL", "Only MUTATED (Not Precog)")) "All_Genes" else "PRECOG"]]
-  
-  if (int_type == "Only MUTATED (Not Precog)") {
-    tumor_data <- original[[cancer_type]][["Non_PRECOG"]]
-    sel_data <- sel_data[sel_data$gene_list %in% tumor_data$gene_list, ]
-  }
+  sel_data <- if (int_type %in% c("All Genes", "Only MUTATED (Not Precog)")) cancer_data[["inter"]] else cancer_data[["precog_inter"]]
+  tumor_data <- original[[cancer_type]][[if (int_type =="All Genes") "All_Genes" else if (int_type == "Only MUTATED (Not Precog)") "Non_PRECOG" else if (int_type == "Only PRECOG (Not Mutated)")"Only_PRECOG" else "PRECOG"]]
   
   column_name <- if ("gene_list" %in% colnames(sel_data)) "gene_list" else "genes"
+  
+  if (int_type %in% c("Only MUTATED (Not Precog)", "Only PRECOG (Not Mutated)")) {
+    sel_data <- sel_data[sel_data[[column_name]] %in% tumor_data$gene_list, ]
+  }
+  
   
   # Get direct interactors of the input gene
   if (!(int_col %in% names(sel_data))) stop("Column missing in data")

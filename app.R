@@ -536,12 +536,6 @@ server <- function(input, output, session) {
     # Time the ggplotly conversion
     start_time <- Sys.time()
     
-    if (input$data_type_precog == "Only MUTATED (Not Precog)" & input$g_network_mutated_interactors == FALSE) {
-      showNotification(type = "message", duration = 15,  
-                     closeButton = TRUE,  # Show close button
-                     ui = tags$div(
-                       style = "font-size: 15px; padding: 15px; border-radius: 5px;",
-                       'All interactors are mutated by default in "only MUTATED"'))}
     
     # Generate the Plotly plot
     plot <- create_network(data = gene_interactors, 
@@ -667,8 +661,6 @@ server <- function(input, output, session) {
     content = function(file) {
       data_list <- gene_data()
       
-      str(data_list)
-      
       validate(need(!is.null(data_list), "No data available for download."))
       
       write.xlsx(data_list, file = file)
@@ -679,3 +671,4 @@ server <- function(input, output, session) {
 }
 
 shinyApp(ui = ui, server = server)
+

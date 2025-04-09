@@ -114,7 +114,7 @@ create_category_heatmaps <- function(gene_presence_df, top_n = 50, num_cancers =
       layout(
         title = paste("Gene Presence in", category),
         xaxis = list(title = "Cancer Type", tickangle = 45),
-        yaxis = list(title = "Gene", tickfont = list(size = 6)),
+        yaxis = list(title = "Gene", tickfont = list(size = 10)),
         margin = list(t = 50)
       )
     

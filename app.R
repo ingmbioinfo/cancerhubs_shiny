@@ -215,8 +215,8 @@ server <- function(input, output, session) {
       ranking_plot <- create_ranking_plot(gene_rankings, input$gene, input$dataframe_subset)
       pan_cancer_plot <- create_pan_cancer_position_plot(pan_cancer_results, input$gene)
       
-      ranking_plot <- ranking_plot + theme(plot.margin = margin(t = 130, r = 0, b = 100, l = 5, unit = "pt")) + guides(color = guide_legend(nrow = 3))
-      pan_cancer_plot <- pan_cancer_plot + theme(plot.margin = margin(t = 0, r = 50, b = 75, l = 0, unit = "pt"))
+      ranking_plot <- ranking_plot + theme(plot.margin = margin(t = 80, r = 5, b = 80, l = 10, unit = "pt")) + guides(color = guide_legend(nrow = 3))
+      pan_cancer_plot <- pan_cancer_plot + theme(plot.margin = margin(t = 10, r = 0, b = 100, l = 0, unit = "pt"))
       
       
       
@@ -449,13 +449,13 @@ server <- function(input, output, session) {
     
     req(input$num_lines,input$num_cancers)
     
-    if (input$num_lines > 89) {
+    if (input$num_lines > 50) {
       showNotification(type = "warning", duration = 15,  
                        closeButton = TRUE,  # Show close button
                        ui = tags$div(
                          style = "font-size: 15px; padding: 15px; border-radius: 5px;",
                          tags$p(
-                           'The number of extracted lines is higher than 90, the visualization may be affected!', 
+                           'The number of extracted lines is higher than 50, the visualization may be affected!', 
                            tags$br(),
                            'Complete data is still available for download.'
                          )

@@ -368,8 +368,8 @@ server <- function(input, output, session) {
       showNotification(type = "warning", duration = 15,  
                        closeButton = TRUE,  # Show close button
                        ui = tags$div(
-                         style = "font-size: 18px; padding: 20px; border-radius: 5px;",
-                         "The output was limited to the top 50 genes."))
+                         style = "font-size: 15px; padding: 20px; border-radius: 5px;",
+                         "The output was limited to the top 50 genes.", br(), 'Complete data is still available for download.'))
     } else if (top_n < 2) {
       top_n <- 2
       showNotification("Top genes too low, Top 2 genes are shown.", type = "warning", duration = 15)
@@ -456,7 +456,7 @@ server <- function(input, output, session) {
                          style = "font-size: 15px; padding: 15px; border-radius: 5px;",
                          tags$p(
                            'The number of extracted lines is higher than 50, the visualization may be affected!', 
-                           tags$br(),
+                           br(),
                            'Complete data is still available for download.'
                          )
                        ))}
@@ -513,7 +513,7 @@ server <- function(input, output, session) {
   # Provide download for the extracted data as XLSX
   output$download_extracted_data <- downloadHandler(
     filename = function() {
-      paste("Extracted_Genes_", Sys.Date(), ".xlsx", sep = "")
+      paste("Extracted_Genes_", input$selected_dataframe, ".xlsx", sep = "")
     },
     content = function(file) {
       selected_df <- extracted_data_reactive()
@@ -556,7 +556,7 @@ server <- function(input, output, session) {
   
   output$downloadGeneNetwork <- downloadHandler(
     filename = function() {
-      paste("gene_network_plot_", Sys.Date(), ".pdf", sep = "")
+      paste("gene_network_plot_", input$gene_sel,"_",input$data_type_precog, ".pdf", sep = "")
     },
     content = function(file) {
       # Generate the igraph object using create_network

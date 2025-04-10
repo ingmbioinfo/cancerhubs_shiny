@@ -216,7 +216,7 @@ server <- function(input, output, session) {
       pan_cancer_plot <- create_pan_cancer_position_plot(pan_cancer_results, input$gene)
       
       ranking_plot <- ranking_plot + theme(plot.margin = margin(t = 80, r = 5, b = 80, l = 10, unit = "pt")) + guides(color = guide_legend(nrow = 3))
-      pan_cancer_plot <- pan_cancer_plot + theme(plot.margin = margin(t = 10, r = 0, b = 100, l = 0, unit = "pt"))
+      pan_cancer_plot <- pan_cancer_plot + theme(plot.margin = margin(t = 10, r = 0, b = 100, l = 50, unit = "pt"))
       
       
       

@@ -11,55 +11,56 @@ to_ordinal_expression_text <- function(x) {
 
 
 
-
 create_ranking_plot <- function(rankings, gene, dataframe_subset) {
   if (nrow(rankings) == 0) {
     plot(1, type = "n", xlab = "", ylab = "", main = "Gene not found in any tumor type")
   } else {
-    rankings$label_text <- mapply(function(rank, total) {
+    
+    rankings$new_score = (1 - rankings$Rank/ rankings$Total)*100
+    
+    #create ordinals lables
+    rankings$label_text <- mapply(function(rank, total) { 
       paste0(to_ordinal_expression_text(rank), " ~ '/' ~ ", total)
     }, rankings$Rank, rankings$TotalGenes)
     
-    mean_rank <- mean(rankings$Rank)
+    mean_score <- mean(rankings$new_score)
     
-    # Identify the row with the minimum rank
-    min_rank_idx <- which.min(rankings$Rank)
-    rankings$IsMin <- FALSE
-    rankings$IsMin[min_rank_idx] <- TRUE
+    # Identify the row with the maximum new_score
+    max_score_idx <- which.max(rankings$new_score)
+    rankings$IsMax <- FALSE
+    rankings$IsMax[max_score_idx] <- TRUE
     
-    ggplot(rankings, aes(y = reorder(Tumor, -Rank), x = Rank)) +
-      geom_vline(xintercept = mean_rank, linetype = "dotted", color = "black") + 
+    ggplot(rankings, aes(y = reorder(Tumor, new_score), x = new_score)) +
+      geom_vline(xintercept = mean_score, linetype = "dotted", color = "black") + 
       
-      geom_segment(aes(xend = mean_rank, yend = reorder(Tumor, -Rank), color = Rank), 
+      geom_segment(aes(xend = mean_score, yend = reorder(Tumor, new_score), color = new_score), 
                    size = 0.8, show.legend = FALSE) +
       
       # Regular points (no border)
       geom_point(
-        data = subset(rankings, !IsMin),
-        aes(fill = Rank),
+        data = subset(rankings, !IsMax),
+        aes(fill = new_score),
         shape = 21, size = 7, color = "transparent"
       )  +
       
-      # Point with min rank (black border)
-      geom_point(data = subset(rankings, IsMin),
-                 aes(fill = Rank),
+      # Point with max new_score (black border)
+      geom_point(data = subset(rankings, IsMax),
+                 aes(fill = new_score),
                  shape = 21, size = 7, color = "black", stroke = 1.2, show.legend = FALSE) +
       
       geom_text(aes(label = label_text), hjust = -0.2, vjust = -1.1, size = 4, parse = TRUE, show.legend = FALSE) +
-      annotate("text", x = mean_rank - 0.1, y = 0.2, label = "Mean Rank", 
+      annotate("text", x = mean_score, y = 0.2, label = "Mean Score", 
                vjust = -0.5, hjust = 0, size = 4, color = "black") +
       
-      scale_fill_gradient(low = "#0A9396", high = "#EEA2AD") +
-      scale_color_gradient(low = "#0A9396", high = "#EEA2AD") +
-      scale_x_reverse(expand = expansion(mult = c(0.05, 0.4))) +
-      
-      
+      scale_fill_gradient(high = "#0A9396", low = "#EEA2AD") +
+      scale_color_gradient(high = "#0A9396", low = "#EEA2AD") +
+      scale_x_continuous(expand = expansion(mult = c(0.05, 0.4))) +
       
       labs(
         title = paste("Ranking of", gene, "in", gsub("_", " ", dataframe_subset)),
         y = "Tumor Type",  
-        x = "Rank (1 = Highest Rank)", 
-        fill = "Rank in tumors"
+        x = "Percentile Score (1 - Rank/Total genes)", 
+        fill = "Percentile Score"
       ) +
       theme_classic() +
       theme(
@@ -80,6 +81,7 @@ create_ranking_plot <- function(rankings, gene, dataframe_subset) {
       )
   }
 }
+
 
 
 

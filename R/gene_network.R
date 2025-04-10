@@ -236,7 +236,12 @@ create_network <- function(data, original, cancer_type, int_type, gene, include_
        vertex.color = vertex_colors,
        vertex.frame.color = vertex_colors,
        vertex.label.color = "black", vertex.label.font = 2, 
-       main = paste("Top50 Interactors of", gene))
+       main = "")
+  
+  title(main = paste("Top50 Interactors of", gene),
+        col.main = "black",      # Title color
+        font.main = 1,          # Font style (1=plain, 2=bold, 3=italic, 4=bold italic)
+        cex.main = 1.4)         # Title size (default is 1)
   
   return(g)
 }

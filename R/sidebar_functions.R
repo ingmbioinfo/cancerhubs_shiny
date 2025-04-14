@@ -157,7 +157,7 @@ createSidebar <- function() {
 "),
           
           br(),
-          selectInput("network_tumor", "Select Tumor:", choices = names(data)),
+          selectInput("g_network_tumor", "Select Tumor:", choices = names(data)),
           selectInput("data_type_precog", "Select Dataset Type:", choices = c("All Genes", "PRECOG (Mutated or Not)","Only MUTATED (Not Precog)", "Only PRECOG (Not Mutated)")),
           textInput("gene_sel", "Enter Gene Name:", value = "TP53"),
           checkboxInput("g_network_mutated_interactors", "Include Only Mutated Interactors", value = TRUE),

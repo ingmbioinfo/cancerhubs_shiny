@@ -67,7 +67,8 @@ ui <- fluidPage(
                             cancerhubs_style$primary_text,
                             cancerhubs_style$sidebar_bg,
                             cancerhubs_style$button_bg
-    )))
+    ))),
+    tags$link(rel = "icon", type = "image/x-icon", href = "favicon.ico")
   ),
   
   titlePanel(
@@ -531,7 +532,7 @@ server <- function(input, output, session) {
   # GENE NETWORK
   
   output$gene_network <- renderPlot({
-    req(input$network_tumor, input$gene_sel,input$data_type_precog)
+    req(input$g_network_tumor, input$gene_sel,input$data_type_precog)
     
     # Time the ggplotly conversion
     start_time <- Sys.time()
@@ -540,7 +541,7 @@ server <- function(input, output, session) {
     # Generate the Plotly plot
     plot <- create_network(data = gene_interactors, 
                                original = data,
-                               cancer_type = input$network_tumor,
+                               cancer_type = input$g_network_tumor,
                                gene = input$gene_sel, 
                                int_type =input$data_type_precog,
                                include_mutated = input$g_network_mutated_interactors,
@@ -556,13 +557,13 @@ server <- function(input, output, session) {
   
   output$downloadGeneNetwork <- downloadHandler(
     filename = function() {
-      paste("gene_network_plot_", input$network_tumor ,"_", input$data_type_precog, "_",input$gene_sel, ".pdf", sep = "")
+      paste("gene_network_plot_", input$g_network_tumor ,"_", input$data_type_precog, "_",input$gene_sel, ".pdf", sep = "")
     },
     content = function(file) {
       # Generate the igraph object using create_network
       g <- tryCatch(
         {create_network(data = gene_interactors, original = data,
-                       cancer_type = input$network_tumor, gene = input$gene_sel, 
+                       cancer_type = input$g_network_tumor, gene = input$gene_sel, 
                        int_type = input$data_type_precog,include_mutated = input$g_network_mutated_interactors,
                        crosses = input$cross)},
         error = function(e) {
@@ -610,7 +611,7 @@ server <- function(input, output, session) {
   
   # Observe event when user selects parameters
   observe( {
-    link <- get_file_link(input$network_tumor, input$data_type_precog, input$g_network_mutated_interactors)
+    link <- get_file_link(input$g_network_tumor, input$data_type_precog, input$g_network_mutated_interactors)
     selected_file_link(link)
   })
   
@@ -628,14 +629,14 @@ server <- function(input, output, session) {
   )
   
   gene_data <- reactive({
-    req(input$gene_sel, input$network_tumor, input$data_type_precog)  # Ensure input is provided
+    req(input$gene_sel, input$g_network_tumor, input$data_type_precog)  # Ensure input is provided
     
     data_result <- tryCatch(
       {
         Get_gene_interactors(
           data = gene_interactors, 
           original = data,
-          cancer_type = input$network_tumor, 
+          cancer_type = input$g_network_tumor, 
           gene = input$gene_sel, 
           int_type = input$data_type_precog,
           include_mutated = input$g_network_mutated_interactors
@@ -656,7 +657,7 @@ server <- function(input, output, session) {
   
   output$downloadGeneTable <- downloadHandler(
     filename = function() {
-      paste("Gene_Interactors_", input$network_tumor ,"_", input$data_type_precog, "_",input$gene_sel, ".xlsx", sep = "")
+      paste("Gene_Interactors_", input$g_network_tumor ,"_", input$data_type_precog, "_",input$gene_sel, ".xlsx", sep = "")
     },
     content = function(file) {
       data_list <- gene_data()

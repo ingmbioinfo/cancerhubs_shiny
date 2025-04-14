@@ -8,16 +8,16 @@ createSidebar <- function() {
   <div style='font-size: 13px;'>
     <p>In this section, you can explore the original datasets used throughout the CancerHubs analysis.</p>
 
-    <p>The primary dataset, <strong>All Genes</strong>, contains all genes identified based on their mutational status and/or inclusion in the PRECOG database.</p>
+    <p>The primary dataset, <strong>All Genes</strong>, contains all genes identified based on their mutational status and/or relevance in the <a href='https://precog.stanford.edu/' target='_blank'>PRECOG</a> database.</p>
 
     <p>The other three datasets represent filtered subsets:</p>
     <ul>
       <li><strong>PRECOG (Mutated or Not)</strong> – genes in PRECOG, regardless of mutation</li>
-      <li><strong>Only MUTATED (Not Precog)</strong> – mutated genes not included in PRECOG</li>
+      <li><strong>Only MUTATED (Not Precog)</strong> – mutated genes not relevant in PRECOG</li>
       <li><strong>Only PRECOG (Not Mutated)</strong> – PRECOG genes without detected mutations</li>
     </ul>
 
-    <p>Each gene is ranked by its <strong>Network Score</strong>, which reflects its topological importance and potential biological relevance based on its interactions.</p>
+    <p>Each gene is ranked by its <strong>Network Score</strong>, which reflects its topological importance and potential biological relevance based on its interactions (derived from <a href='https://thebiogrid.org/' target='_blank'>BioGRID</a>).</p>
 
     <p>You can use this panel to:</p>
     <ul>
@@ -72,23 +72,23 @@ createSidebar <- function() {
           h4(tags$span(style="font-weight: bold", "Common Genes")),
           HTML("
   <div style='font-size: 13px;'>
-    <p>This panel helps identify genes that are consistently ranked among the top across multiple tumour types.</p>
+    <p>This panel helps identify genes that are ranked among the most relevant (Top), on the basis of their Network Score, across multiple tumour types.</p>
 
     <p>Genes are selected based on their <strong>Network Score</strong>, which reflects their importance in tumour-specific interaction networks.</p>
 
     <p>By adjusting the parameters, you can:</p>
     <ul>
-      <li>Select how many top-ranking genes to consider from each tumour type</li>
-      <li>Set a threshold for how many tumours a gene must appear in to be included</li>
+      <li>Select how many <strong>top-ranking</strong> genes to consider from each tumour type</li>
+      <li>Set a threshold for how many <strong>tumors</strong> a gene must appear in to be included</li>
     </ul>
 
     <p>The output includes:</p>
     <ul>
-      <li>A downloadable table listing the selected genes and the tumour types in which they recur</li>
-      <li>An interactive heatmap showing gene presence across tumours <span style='color:#0A9396; font-weight:bold;'>teal</span> indicates presence, <span style='color:pink; font-weight:bold;'>pink</span> indicates absence * </li>
+      <li>A downloadable <strong>table</strong> listing the selected genes and the tumour types in which they recur</li>
+      <li>An interactive <strong>heatmap</strong> showing gene presence across tumours (for the image download click on the top-rigth corner of the plot)* </li>
     </ul>
 
-    <p>*The number of top genes selected also determines the number of rows in this heatmap.</p>
+    <p>*The number of top genes selected also determines the number of rows in this heatmap. </p>
   </div>
 "),
           br(),
@@ -113,9 +113,9 @@ createSidebar <- function() {
     <p>Each node represents a gene, and edges indicate known interactions among the selected top genes. 
     <p>By adjusting the parameters, you can:</p>
     <ul>
-      <li>Choose the number of top genes to visualise</li>
-      <li>Restrict nodes to mutated interactors only</li>
-      <li>Select the colour scheme to display a different score</li>
+      <li>Choose the number of <strong>top genes</strong> to visualise</li>
+      <li>Restrict nodes to <strong>mutated interactors</strong> only</li>
+      <li>Switch the coloring of nodes to show their Network Score or their <strong>PRECOG metaZ</strong></li>
     </ul>
 
     <p>All network data — including the nodes and their connections — can be downloaded as Excel tables. For image download, use the toolbar in the top-right corner of the network panel.</p>
@@ -139,14 +139,17 @@ createSidebar <- function() {
   <div style='font-size: 13px;'>
     <p>This panel allows you to explore the interaction partners of a specific gene of interest, selected from the CancerHubs dataset.</p>
 
-    <p>Up to <strong>50 interactors</strong> are shown, prioritised — when possible — by <strong>Network Score</strong>. Interactors without scores are included only if no ranked alternatives are available.</p>
-
-    <p><em><strong>Important:</strong></em> If genes with no Network Score appear in the top 50, their presence does <strong>not</strong> imply greater relevance than missing ones. Complete interactors tables are available for download below.</p>
+    <p>The central input genes are selected through the Select Dataset dropdown, and are sourced from the already established CancerHubs categories. 
+    <br>Up to <strong>50 interactors</strong> are shown, prioritised — when possible — by <strong>Network Score</strong>. Interactors without scores are displayed only if no ranked alternatives are available.
+    These interactors are not relevant to CancerHubs nor found in the previously displayed tables. 
+    <br>In the downloadable tables all the interactors are included, whether ranked or not. </p>
+     
+     <p>The option to include <strong>Only Mutated interactors</strong> specifically refers to interactors, not to the central input gene. </p>
 
     <p>Depending on the dataset category selected:</p>
     <ul>
-      <li>In <strong>All Genes</strong> and <strong>Only Mutated</strong>, interactors are consistent with the ones found </li>
-      <li>In PRECOG-related categories, both the input gene and its interactors must be PRECOG genes</li>
+      <li>In <strong>All Genes</strong> and <strong>Only Mutated</strong>, interactors are consistent with the initial raw tables (check 'View Dataframe') </li>
+      <li>In <strong>PRECOG</strong> and <strong>Only PRECOG</strong>, gene's interactors must be PRECOG genes</li>
     </ul>
 
     <p>You can also enable cross-connections among interactors to show shared neighbours.</p>
@@ -161,11 +164,13 @@ createSidebar <- function() {
           checkboxInput("cross", "Show all the interactions", value = FALSE),
           br(),
           h4("Downloads"), 
-          p("Here you can download the network plot and the complete table of interaction of your interest gene.\nBelow, you'll also find the WHOLE dataset of interactions for all the genes that match your paramters selection.", style = "white-space: pre-wrap;"), # Add the formal text
+          p("Here is available the network plot and the complete table of interactions for your interest gene.", style='font-size: 13px;'),
           br(),
           downloadButton("downloadGeneNetwork", "Download Network Plot Image (PDF)"),
           downloadButton("downloadGeneTable", " Download your Gene Interactions (XLSX)"),
           br(),br(),
+          p("For further analysis is also available the WHOLE dataset of interactions for all the genes that match your paramters selection.", style='font-size: 13px;'), # Add the formal text
+          br(),
           downloadButton("downloadData", "Download WHOLE Interactome Tables (XLSX)"),
         ),
         conditionalPanel(

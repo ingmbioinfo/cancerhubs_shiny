@@ -106,7 +106,12 @@ create_category_heatmaps <- function(gene_presence_df, top_n = 50, num_cancers =
       y = ~Gene,
       z = ~Presence,
       type = 'heatmap',
-      colors = c('pink', '#0A9396'),
+      colorscale = list(
+        c(0, 'pink'), # Color for the minimum value (0)
+        c(1, '#0A9396')  # Same color for the maximum value (1)
+      ),
+      zmin = 0, # Explicitly set the minimum value of z
+      zmax = 1, # Explicitly set the maximum value of z
       text = ~paste("Gene:", Gene, "<br>Presence:", ifelse(Presence == 1, "Present", "Not Present")),
       hoverinfo = 'text',
       showscale = FALSE

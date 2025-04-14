@@ -176,7 +176,7 @@ server <- function(input, output, session) {
   # Provide download for the plot as PDF
   output$download_plot <- downloadHandler(
     filename = function() {
-      paste(input$gene, "_ranking_plot.pdf", sep = "")
+      paste(input$gene, "_", input$dataframe_subset, "_ranking_plot.pdf", sep = "")
     },
     content = function(file) {
       
@@ -231,7 +231,7 @@ server <- function(input, output, session) {
   # Provide download for the ranking table as XLSX
   output$download_ranking_table <- downloadHandler(
     filename = function() {
-      paste(input$gene, "_ranking_table.xlsx", sep = "")
+      paste(input$gene,"_", input$dataframe_subset, "_ranking_table.xlsx", sep = "")
     },
     content = function(file) {
       rankings <- get_gene_ranking_reactive()  # Fetch the rankings
@@ -267,7 +267,7 @@ server <- function(input, output, session) {
   
   output$download_pan_cancer <- downloadHandler(
     filename = function() {
-      paste("pan_cancer_ranking_", input$dataframe_subset, ".xlsx", sep = "")
+      paste("pan_cancer_ranking_",input$gene,"_", input$dataframe_subset, ".xlsx", sep = "")
     },
     content = function(file) {
       # Generate the pan-cancer ranking data
@@ -513,7 +513,7 @@ server <- function(input, output, session) {
   # Provide download for the extracted data as XLSX
   output$download_extracted_data <- downloadHandler(
     filename = function() {
-      paste("Extracted_Genes_", input$selected_dataframe, ".xlsx", sep = "")
+      paste("Common_Genes_", input$selected_dataframe, ".xlsx", sep = "")
     },
     content = function(file) {
       selected_df <- extracted_data_reactive()
@@ -556,7 +556,7 @@ server <- function(input, output, session) {
   
   output$downloadGeneNetwork <- downloadHandler(
     filename = function() {
-      paste("gene_network_plot_", input$gene_sel,"_",input$data_type_precog, ".pdf", sep = "")
+      paste("gene_network_plot_", input$network_tumor ,"_", input$data_type_precog, "_",input$gene_sel, ".pdf", sep = "")
     },
     content = function(file) {
       # Generate the igraph object using create_network
@@ -589,7 +589,7 @@ server <- function(input, output, session) {
              main = paste("Top50 Interactors of", input$gene_sel))
         legend(
           x = 0.6, y = -1,
-          legend = c(input$gene_sel,"Interactors with Network Score", "Interactors with Network Score equal to 0"),
+          legend = c(input$gene_sel,"Network Score > 0", "Network Score = 0 or Not Available"),
           col = c( "pink","#83C9C8", "#C9E8E7"),
           pch = 21,
           pt.bg = c("pink","#83C9C8", "#C9E8E7"),
@@ -656,7 +656,7 @@ server <- function(input, output, session) {
   
   output$downloadGeneTable <- downloadHandler(
     filename = function() {
-      paste("Gene_Interactors_", input$gene_sel, ".xlsx", sep = "")
+      paste("Gene_Interactors_", input$network_tumor ,"_", input$data_type_precog, "_",input$gene_sel, ".xlsx", sep = "")
     },
     content = function(file) {
       data_list <- gene_data()

@@ -45,9 +45,9 @@ createMainPanel <- function() {
                      div(style = "background-color: pink; width: 20px; height: 20px; margin-right: 5px; border-radius: 50% ;"),
                      span("Input Gene"),
                      div(style = "background-color: #83C9C8; width: 20px; height: 20px; margin-left: 20px; margin-right: 5px;border-radius: 50% ;"),
-                     span("Node with Network Score"),
+                     span("Network Score > 0"),
                      div(style = "background-color: #C9E8E7; width: 20px; height: 20px; margin-left: 20px; margin-right: 5px;border-radius: 50%;"),
-                     span("Node with Network Score equal to 0"),
+                     span("Network Score = 0 or Not Available"),
                      br(),br(),br(),br(),
                      )
                    

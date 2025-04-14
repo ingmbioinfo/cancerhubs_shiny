@@ -34,7 +34,7 @@ create_ranking_plot <- function(rankings, gene, dataframe_subset) {
       geom_vline(xintercept = mean_score, linetype = "dotted", color = "black") + 
       
       geom_segment(aes(xend = mean_score, yend = reorder(Tumor, new_score), color = new_score), 
-                   size = 0.8, show.legend = FALSE) +
+                   linewidth = 0.8, show.legend = FALSE) +
       
       # Regular points (no border)
       geom_point(

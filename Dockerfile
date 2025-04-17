@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean
 
 # Install R packages required by the app
-RUN R -e "install.packages(c('shiny', 'cowplot', 'ggplot2', 'openxlsx', 'DT', 'purrr', 'igraph', 'plotly', 'RColorBrewer', 'dplyr', 'tidyr'), dependencies=TRUE)"
+RUN R -e "install.packages(c('shiny', 'cowplot', 'ggplot2', 'openxlsx', 'DT', 'purrr', 'igraph', 'plotly', 'RColorBrewer', 'dplyr', 'tidyr', 'shinycssloaders'), dependencies=TRUE)"
 RUN R -e "install.packages('RPostgreSQL', dependencies=TRUE)"
 
 # Copy all app files into the container

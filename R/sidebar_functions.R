@@ -34,7 +34,8 @@ createSidebar <- function() {
                                   "PRECOG (Mutated or Not)" = "PRECOG", 
                                   "Only MUTATED (Not Precog)" = "Non_PRECOG",
                                   "Only PRECOG (Not Mutated)" = "Only_PRECOG")),
-          downloadButton("download_dataframe", "Download Dataframe (XLSX)")
+          downloadButton("download_dataframe", "Download Dataframe (XLSX)"),
+          br(), br(), br()
         ),
         conditionalPanel(
           condition = "input.tabSelected === 'Gene Ranking'",

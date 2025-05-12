@@ -84,7 +84,7 @@ For questions or support, contact:
 
 - Nicola Manfrini – `manfrini@ingm.org`
 - Ivan Ferrari – `ferrari@ingm.org`
-- Chiara Arsuffi – `arsuffi@ingm.org`
+- Elisa Arsuffi – `arsuffi@ingm.org`
 
 ---
 

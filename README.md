@@ -1,79 +1,111 @@
-<img src="www/cancerhubs_logo.png" align="right" alt="" width="200" />
-
+<img src="www/cancerhubs_logo.png" align="right" alt="CancerHubs Logo" width="200" />
 
 # CancerHubs Data Explorer
 
-Welcome to the **CancerHubs Data Explorer**! This Shiny application provides an interactive interface for exploring [Cancerhubs results](https://github.com/ingmbioinfo/cancerhubs), including viewing dataframes and examining gene rankings across various tumor types. This guide will walk you through setting up the app and navigating its features.
+Welcome to the **CancerHubs Data Explorer**!  
+This Shiny application provides an interactive interface for exploring results from the [CancerHubs project](https://github.com/ingmbioinfo/cancerhubs), including ranked gene data across tumor types, network visualisations, and shared hubs.
 
-## Features
-- **View Dataframes**: Explore different cancer datasets, filter by cancer type, and download the data for further analysis.
-- **Gene Ranking Analysis**: Enter a gene name to see its ranking across different cancer types and subsets, visualize the rankings, and download both plots and tables for reference.
+🧪 **Live App**: [https://cancerhubs.app/](https://cancerhubs.app/)  
+📦 **Repository**: [https://github.com/ingmbioinfo/cancerhubs_shiny](https://github.com/ingmbioinfo/cancerhubs_shiny)
 
-## Prerequisites
-To run this Shiny application, you will need:
-- **R** installed on your machine.
-- The following R packages:
-  - `shiny`
-  - `ggplot2`
-  - `openxlsx`
-  - `DT`
+---
 
-## Installation
+## 🔍 Features
+
+- **View Dataframes**  
+  Explore pre-processed gene tables for each tumor type. Choose between `All Genes`, `PRECOG`, `Only Mutated`, and `Only PRECOG` subsets. Download filtered data as Excel.
+
+- **Gene Ranking Analysis**  
+  Input a gene symbol to check its rank across cancers based on Network Score. Visualise and download the results, including a pan-cancer positioning plot.
+
+- **Common Genes Explorer**  
+  Identify genes that consistently rank in the top N positions across multiple tumors. View results in a dynamic heatmap and export them.
+
+- **Network Plot (3D)**  
+  Visualise a 3D network of the top-scoring genes in a tumor dataset. Interactions are mapped based on known BioGRID interactions. Node color, shape, and size encode multiple annotations.
+
+- **Gene-Centric Network (2D)**  
+  Explore direct interactors of any gene of interest. Visualise up to 50 interactors with igraph-style layout and download both the network image and tables.
+
+---
+
+## 🛠️ Prerequisites
+
+To run this app locally, ensure you have:
+
+- **R** (≥ 4.0.0)
+- These R packages:
+  ```r
+  install.packages(c(
+    "shiny", "ggplot2", "openxlsx", "DT", "plotly",
+    "igraph", "RColorBrewer", "cowplot", "purrr",
+    "dplyr", "tidyr", "shinycssloaders"
+  ))
+  ```
+
+---
+
+## 💾 Installation
+
 1. **Clone the repository**:
-   ```sh
+   ```bash
    git clone https://github.com/ingmbioinfo/cancerhubs_shiny.git
    ```
 
-2. **Install required R packages (if needed)**:
-   Open R or RStudio and run the following commands:
+2. **Run the App**:
+   Open R or RStudio and run:
    ```r
-   install.packages("shiny")
-   install.packages("ggplot2")
-   install.packages("openxlsx")
-   install.packages("DT")
+   library(shiny)
+   runApp("path/to/cancerhubs_shiny")
    ```
 
-## Running the App
-To run the Shiny app, open R or RStudio and execute the following commands:
+---
 
-```r
-library(shiny)
-runApp("path/to/CancerHubsDataExplorer")
-```
+## 🌐 Online Access
 
-Replace `"path/to/CancerHubsDataExplorer"` with the actual path to the folder where you cloned the repository.
+You can use the app directly online without installation:  
+👉 [https://cancerhubs.app/](https://cancerhubs.app/)
 
-## User Interface Walkthrough
+---
 
-### 1. View Dataframe Tab
-In the **View Dataframe** tab, you can:
-- **Select Cancer Type**: Choose from various cancer types available in the dataset.
-- **Select Dataframe**: Choose between different subsets of the data, such as "All Genes", "PRECOG", "Non PRECOG", or "Only PRECOG".
-- **View Data**: View the selected dataset in an interactive table with pagination and scrolling.
-- **Download Data**: Download the displayed dataframe as an Excel file by clicking the "Download Dataframe (XLSX)" button.
+## 🧬 Data
 
-### 2. Gene Ranking Tab
-In the **Gene Ranking** tab, you can:
-- **Enter Gene Name**: Input the name of the gene you are interested in (e.g., "TP53").
-- **Select Dataframe Subset**: Choose the subset for ranking analysis (e.g., "All Genes", "PRECOG").
-- **View Rankings**: See the ranking of the gene across various cancer types in an interactive table.
-- **Download Ranking Table**: Download the ranking information as an Excel file.
-- **View Ranking Plot**: Visualize the gene's rank across different tumor types.
-- **Download Plot**: Download the ranking plot as a PDF file.
+All gene tables and interaction datasets are loaded dynamically from the original CancerHubs repository:
 
-## Contributing
-If you wish to contribute to the project, feel free to fork the repository and submit a pull request. We welcome improvements and suggestions to enhance the user experience and data visualization features.
+- [`all_results.rds`](https://github.com/ingmbioinfo/cancerhubs/blob/main/result/all_results.rds)
+- [`genes_interactors_list.rds`](https://github.com/ingmbioinfo/cancerhubs/blob/main/result/genes_interactors_list.rds)
+- [`biogrid_interactors`](https://github.com/ingmbioinfo/cancerhubs/blob/main/data/biogrid_interactors)
 
-## License
-This project is licensed under the MIT License. See the LICENSE file for more details.
+---
 
-## Funding
-This research was funded by Associazione Italiana per la Ricerca sul Cancro (AIRC), under MFAG 2021 ID 26178 project to Nicola Manfrini.
+## 🙋‍♀️ Contact
 
-## Contact
-For questions or support, please contact manfrini@ingm.org, ferrari@ingm.org or arsuffi@ingm.org. 
+For questions or support, contact:
 
-## Citation
-If you use CancerHubs in your research, please cite our paper:
+- Nicola Manfrini – `manfrini@ingm.org`
+- Ivan Ferrari – `ferrari@ingm.org`
+- Chiara Arsuffi – `arsuffi@ingm.org`
 
-Ivan Ferrari, Giancarlo Lai, Federica De Grossi, Stefania Oliveto, Stefano Biffo, Nicola Manfrini. "CancerHubs: A Systematic Data Mining and Elaboration Approach for Identifying Novel Cancer-Related Protein Interaction Hubs." [Journal, Volume, Year].
+---
+
+## 📖 Citation
+
+If you use CancerHubs in your research, please cite:
+
+> Ivan Ferrari, Federica De Grossi, Giancarlo Lai, Stefania Oliveto, Giorgia Deroma, Stefano Biffo, Nicola Manfrini.  
+> **CancerHubs: a systematic data mining and elaboration approach for identifying novel cancer-related protein interaction hubs**.  
+> _Briefings in Bioinformatics_, Volume 26, Issue 1, January 2025.  
+> [https://doi.org/10.1093/bib/bbae635](https://doi.org/10.1093/bib/bbae635)
+
+---
+
+## 📜 License
+
+MIT License.  
+© 2024 Istituto Nazionale di Genetica Molecolare (INGM).
+
+---
+
+## 💸 Funding
+
+This research was funded by the **Associazione Italiana per la Ricerca sul Cancro (AIRC)**, under **MFAG 2021 ID 26178** project to **Nicola Manfrini**.

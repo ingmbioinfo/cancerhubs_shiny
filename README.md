@@ -6,7 +6,7 @@ Welcome to the **CancerHubs Data Explorer**!
 This Shiny application provides an interactive interface for exploring results from the [CancerHubs project](https://github.com/ingmbioinfo/cancerhubs), including ranked gene data across tumor types, network visualisations, and shared hubs.
 
 🧪 **Live App**: [https://cancerhubs.app/](https://cancerhubs.app/)  
-📦 **Repository**: [https://github.com/ingmbioinfo/cancerhubs_shiny](https://github.com/ingmbioinfo/cancerhubs_shiny)
+📦 **Cancerhubs Main Repository**: [https://github.com/ingmbioinfo/cancerhubs](https://github.com/ingmbioinfo/cancerhubs)
 
 ---
 

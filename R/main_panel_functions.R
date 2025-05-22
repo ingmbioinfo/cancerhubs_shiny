@@ -5,37 +5,29 @@ createMainPanel <- function() {
           id = "tabSelected",
           tabPanel("Introduction", value = "Introduction", 
                    fluidPage(
-                     # Main heading and welcome
-                     div(style = "text-align: center; font-size: 15px;",
-                         HTML("<h2><strong>CancerHubs Data Explorer</strong></h2>
-              <p>Welcome to the <strong>CancerHubs Data Explorer</strong>! This Shiny application provides an interactive interface for exploring results from the <a href='https://github.com/ingmbioinfo/cancerhubs' target='_blank'>CancerHubs project</a>, including ranked gene data across tumor types, network visualisations, and shared hubs.</p>")
-                     ),
-                     
-                     hr(),
-                     
                      # Dataset explanation retained from original
-                     div(style = "font-size: 15px; text-align: justify;",
+                     div(style = "font-size: 13px; text-align: justify;",
                          HTML("
-             <h3>🧬 Data Overview</h3>
-             <p>The CancerHubs Explorer currently includes data from <strong>11 tumor types</strong>. The datasets will be regularly updated, and future releases will broaden the scope to include additional tumor types and omics layers.</p>
+             <h4>🧿️ Overview</h4>
+             <p><strong>CancerHubs Data Explorer</strong> is a shiny app which provides an interactive interface for exploring results from the <a href='https://github.com/ingmbioinfo/cancerhubs' target='_blank'>CancerHubs project</a>, now extended to include <strong>11 tumor types</strong>.</p>
 
-             <p>The application includes the following gene subsets for exploration:</p>
+             <p>The following gene subsets are available for exploration:</p>
              <ul>
-             <li><strong>All Genes</strong>: Complete list of scored genes per tumor, regardless of mutation or external annotation.</li>
-             <li><strong>PRECOG</strong>: Genes annotated by the <a href='https://precog.stanford.edu/' target='_blank'>PRECOG</a> database, reflecting known prognostic associations.</li>
-             <li><strong>Only Mutated</strong>: Genes identified as mutated in each tumor dataset, excluding those in PRECOG.</li>
-             <li><strong>Only PRECOG</strong>: Genes from the PRECOG database that are not found mutated in the dataset.</li>
+             <li><strong>All Genes</strong>: The complete list of genes selected by the CancerHubs framework, scored per tumor, regardless of mutation status or external annotation.</li>
+             <li><strong>PRECOG</strong>: Genes annotated by the <a href='https://precog.stanford.edu/' target='_blank'>PRECOG</a> database, reflecting significant prognostic associations.</li>
+             <li><strong>Only Mutated</strong>: Genes identified as mutated in the tumor dataset, excluding those in PRECOG set.</li>
+             <li><strong>Only PRECOG</strong>: Genes which are significant for PRECOG Z-score that are not found mutated in the dataset.</li>
              </ul>
 
-             <p>All genes are ranked using a <strong>Network Score</strong>, which captures their topological relevance within interaction networks derived from <a href='https://thebiogrid.org/' target='_blank'>BioGRID</a>. This prioritization helps spotlight genes that may play central roles in tumor biology.</p>
+             <p>All genes are ranked using a <strong>Network Score</strong>, , which quantifies how many of their direct interaction partners are mutated within a given tumor type. By integrating protein–protein interaction data from <a href='https://thebiogrid.org/' target='_blank'>BioGRID</a> with tumor-specific mutation profiles, this score highlights genes that are highly connected to dysfunctional or altered pathways—pointing to their potential as central regulators or therapeutic targets in cancer biology.</p>
              "), 
                          hr(),
                          
                          # Feature highlights
                          
-                         tags$div(style = "font-size: 15px; text-align: justify;",
+                         tags$div(style = "font-size: 13px; text-align: justify;",
                                   
-                                  tags$h3("🔍 App Features"),
+                                  tags$h4("🔍 Features"),
                                   
                                   tags$p("This website allows direct interaction with CancerHubs data through several key tabs:"),
                                   
@@ -93,9 +85,9 @@ createMainPanel <- function() {
                          
                          hr(),
                          
-                         div(style = "font-size: 15px; text-align: justify;",
+                         div(style = "font-size: 13px; text-align: justify;",
                              HTML("
-             <h3>📖 Citation</h3>
+             <h4>📖 Citation</h4>
              <p>If you use CancerHubs in your research, please cite our paper:</p>
              <p>Ivan Ferrari, Federica De Grossi, Giancarlo Lai, Stefania Oliveto, Giorgia Deroma, Stefano Biffo, Nicola Manfrini</p>
              <p><strong>CancerHubs: a systematic data mining and elaboration approach for identifying novel cancer-related protein interaction hubs</strong></p>

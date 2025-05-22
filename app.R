@@ -27,6 +27,9 @@ source("R/gene_network_download.R")
 # Define UI (Make sure cancerhubs_style is available here)
 ui <- fluidPage(
   tags$head(
+    tags$title("CancerHubs Data Explorer"),
+    tags$meta(name = "keywords", 
+              content = "CancerHubs, cancerhubs, cancer gene networks, protein interactions, network score, mutation data, precog, biogrid, cancer bioinformatics,shiny app"),
     tags$style(HTML(sprintf("
       body {
         background-color: %s;

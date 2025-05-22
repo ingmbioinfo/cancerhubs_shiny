@@ -1,35 +1,78 @@
 createSidebar <- function() {
   sidebarPanel(
-    div(class = "sidebar",
+    div(class = "sidebar",conditionalPanel(
+      condition = "input.tabSelected === 'Introduction'",
+      div(
+        class = "logo-container",
+        style = "margin: 10px;",
+        
+        # Logo
+        div(style = "text-align: center;",
+            img(src = "cancerhubs_logo.png", height = "250px", style = "max-width: 100%;", alt = "CancerHubs Logo")
+        ),
+        
+        # CONTACT INFO
+        div(style = "font-size: 15px; text-align: justify;",
+            h4(style = "color: black; font-weight: bold; margin-top: 20px;", "Contact Info"),
+            p("For questions or support, please contact:"),
+            tags$ul( 
+              tags$li("manfrini@ingm.org"),
+              tags$li("ferrari@ingm.org"),
+              tags$li("arsuffi@ingm.org"))
+        ),
+        
+        # RELATED LINKS
+        div(style = "font-size: 15px; text-align: justify;",
+            h4(style = "color: black; font-weight: bold; margin-top: 20px;", "Related Links"),
+            tags$ul(style = "list-style: none; padding-left: 0;",
+                    tags$li(tags$a(href = "https://academic.oup.com/bib/article/26/1/bbae635/7918695", target = "_blank", 
+                                   style = "color: #0073e6; text-decoration: none;", 
+                                   "CancerHubs paper on Briefings in Bioinformatics")),
+                    tags$li(tags$a(href = "https://github.com/ingmbioinfo/cancerhubs", target = "_blank", 
+                                   style = "color: #0073e6; text-decoration: none;", 
+                                   "Updated CancerHubs Directory")),
+                    tags$li(tags$a(href = "https://github.com/ingmbioinfo/cancerhubs_shiny", target = "_blank", 
+                                   style = "color: #0073e6; text-decoration: none;", 
+                                   "Updated App Directory")),
+                    tags$li(tags$a(href = "https://github.com/ingmbioinfo/cancerhubs_paper", target = "_blank", 
+                                   style = "color: #0073e6; text-decoration: none;", 
+                                   "CancerHubs Directory as Published in the Paper"))
+            )
+        ),
+        
+        # LICENSE
+        div(style = "font-size: 15px; text-align: justify;",
+            h4(style = "color: black; font-weight: bold; margin-top: 20px;", "License"),
+            p("This project is licensed under the MIT License. Copyright (c) 2024 National Institute of Molecular Genetics (INGM).")
+        ),
+        
+        # FUNDING
+        div(style = "font-size: 15px; text-align: justify;",
+            h4(style = "color: black; font-weight: bold; margin-top: 20px;", "Funding"),
+            p("This research was funded by Associazione Italiana per la Ricerca sul Cancro (AIRC), under MFAG 2021 ID 26178 project to Nicola Manfrini.")
+        )
+      )
+      
+      
+    ),
         conditionalPanel(
           condition = "input.tabSelected === 'View Dataframe'",
-          h4(tags$span(style="font-weight: bold", "Introduction")),
+          h4(tags$span(style="font-weight: bold", "View Dataframe")),
           HTML("
   <div style='font-size: 13px;'>
     <p>In this section, you can explore the original datasets used throughout the CancerHubs analysis.</p>
-
-    <p>The primary dataset, <strong>All Genes</strong>, contains all genes identified based on their mutational status and/or relevance in the <a href='https://precog.stanford.edu/' target='_blank'>PRECOG</a> database.</p>
-
-    <p>The other three datasets represent filtered subsets:</p>
-    <ul>
-      <li><strong>PRECOG (Mutated or Not)</strong> – genes in PRECOG, regardless of mutation</li>
-      <li><strong>Only MUTATED (Not Precog)</strong> – mutated genes not relevant in PRECOG</li>
-      <li><strong>Only PRECOG (Not Mutated)</strong> – PRECOG genes without detected mutations</li>
-    </ul>
-
-    <p>Each gene is ranked by its <strong>Network Score</strong>, which reflects its topological importance and potential biological relevance based on its interactions (derived from <a href='https://thebiogrid.org/' target='_blank'>BioGRID</a>).</p>
-
     <p>You can use this panel to:</p>
     <ul>
       <li>Select tumour-specific datasets</li>
+      <li>Choose dataset type <em>(e.g.PRECOG, see Introduction for details)</em></li>
       <li>Interactively explore gene-level information</li>
       <li>Download complete tables for external analysis</li>
     </ul>
   </div>
 "),
           br(),
-          selectInput("cancer_type_df", "Select Cancer Type:", choices = names(data)),
-          selectInput("dataframe", "Select Dataframe:",
+          selectInput("cancer_type_df", "Select Tumor:", choices = names(data)),
+          selectInput("dataframe", "Select Dataset Type:",
                       choices = c("All Genes" = "All_Genes", 
                                   "PRECOG (Mutated or Not)" = "PRECOG", 
                                   "Only MUTATED (Not Precog)" = "Non_PRECOG",
@@ -57,7 +100,7 @@ createSidebar <- function() {
 "),
           br(),
           textInput("gene", "Enter Gene Name:", value = "TP53"),
-          selectInput("dataframe_subset", "Select Dataframe Subset:",
+          selectInput("dataframe_subset", "Select Dataset Type:",
                       choices = c("All Genes" = "All_Genes", 
                                   "PRECOG (Mutated or Not)" = "PRECOG", 
                                   "Only MUTATED (Not Precog)" = "Non_PRECOG",
@@ -94,7 +137,7 @@ createSidebar <- function() {
 "),
           br(),
           numericInput("num_lines", "Number of TOP genes:", value = 50),
-          selectInput("selected_dataframe", "Choose Dataframe to View:", 
+          selectInput("selected_dataframe", "Select Dataset Type:", 
                       choices = c("All Genes" = "All_Genes", 
                                   "PRECOG (Mutated or Not)" = "PRECOG", 
                                   "Only MUTATED (Not Precog)" = "Non_PRECOG",
@@ -173,27 +216,6 @@ createSidebar <- function() {
           p("For further analysis is also available the WHOLE dataset of interactions for all the genes that match your paramters selection.", style='font-size: 13px;'), # Add the formal text
           br(),
           downloadButton("downloadData", "Download WHOLE Interactome Tables (XLSX)"),
-        ),
-        conditionalPanel(
-          condition = "input.tabSelected === 'About Us'",
-          div(
-            class = "logo-container",
-            style = "text-align: center; margin: 10px;",
-            img(src = "cancerhubs_logo.png", height = "250px", style = "max-width: 100%;", alt = "CancerHubs Logo"),
-            br(),
-            h4(style = "text-align: center; color: #1B4F72; font-weight: bold; margin-top: 20px;", "RELATED LINKS "),
-            tags$ul(
-              style = "list-style-type: none; padding: 0; text-align: center;",
-              tags$li(tags$a(href = "https://academic.oup.com/bib/article/26/1/bbae635/7918695", target = "_blank", 
-                             style = "color: #0073e6; text-decoration: none; font-size: 14px;", "CancerHubs paper on Briefings in Bioinformatics")),
-              tags$li(tags$a(href = "https://github.com/ingmbioinfo/cancerhubs", target = "_blank", 
-                             style = "color: #0073e6; text-decoration: none; font-size: 14px;", "Updated CancerHubs Directory")),
-              tags$li(tags$a(href = "https://github.com/ingmbioinfo/cancerhubs_shiny", target = "_blank", 
-                             style = "color: #0073e6; text-decoration: none; font-size: 14px;", "Updated App Directory")),
-              tags$li(tags$a(href = "https://github.com/ingmbioinfo/cancerhubs_paper", target = "_blank", 
-                             style = "color: #0073e6; text-decoration: none; font-size: 14px;", "CancerHubs Directory as Published in the Paper"))
-            )
-          )
         )
     )
   )

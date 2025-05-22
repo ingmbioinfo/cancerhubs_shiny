@@ -259,26 +259,6 @@ server <- function(input, output, session) {
     }
   )
   
-  # Provide download for the ranking table as XLSX
-  output$download_ranking_table <- downloadHandler(
-    filename = function() {
-      paste(input$gene,"_", input$dataframe_subset, "_ranking_table.xlsx", sep = "")
-    },
-    content = function(file) {
-      rankings <- get_gene_ranking_reactive()  # Fetch the rankings
-      if (nrow(rankings) == 0) {
-        validate(need(FALSE, showNotification(type = "error", duration = 15,  
-                                              closeButton = TRUE,  # Show close button
-                                              ui = tags$div(
-                                                style = "font-size: 18px; padding: 20px; border-radius: 5px;",
-                                                "No data available for this gene."))))
-      } else {
-        # Write the rankings to the file
-        write.xlsx(rankings, file)
-      }
-    }
-  )
-  
   
   output$pan_cancer_gene_position <- renderPlot({
     req(input$gene, input$dataframe_subset)  # Ensure inputs are provided
@@ -296,22 +276,70 @@ server <- function(input, output, session) {
     
   })
   
+  observeEvent(input$downloadPCR, {
+    showModal(modalDialog(
+      title = "Select file format",
+      selectInput("file_format_pan", "Choose format:", choices = c("Excel (.xlsx)" = "xlsx", "CSV (.csv)" = "csv")),
+      footer = tagList(
+        modalButton("Cancel"),
+        downloadButton("download_pan_cancer", "Download")
+      )
+    ))
+  })
+  
+  # Modal for Gene Ranking Download
+  observeEvent(input$downloadRnk, {
+    showModal(modalDialog(
+      title = "Select file format",
+      selectInput("file_format_ranking", "Choose format:", choices = c("Excel (.xlsx)" = "xlsx", "CSV (.csv)" = "csv")),
+      footer = tagList(
+        modalButton("Cancel"),
+        downloadButton("download_ranking_table", "Download")
+      )
+    ))
+  })
+  
+  # Pan-Cancer Ranking Download Handler
   output$download_pan_cancer <- downloadHandler(
     filename = function() {
-      paste("pan_cancer_ranking_",input$gene,"_", input$dataframe_subset, ".xlsx", sep = "")
+      paste("pan_cancer_ranking_", input$dataframe_subset, ".", input$file_format_pan, sep = "")
     },
     content = function(file) {
-      # Generate the pan-cancer ranking data
       pan_cancer_results <- pan_cancer_ranking(data, input$dataframe_subset)
       
-      # Ensure the data exists
-      req(nrow(pan_cancer_results) > 0)
+      req(nrow(pan_cancer_results) > 0)  # Ensure data exists
       
-      # Write to an Excel file
-      openxlsx::write.xlsx(pan_cancer_results,file)
+      if (input$file_format_pan == "csv") {
+        write.csv(pan_cancer_results, file, row.names = FALSE)
+      } else {
+        openxlsx::write.xlsx(pan_cancer_results, file)
+      }
     }
   ) 
   
+  # Gene Ranking Table Download Handler
+  output$download_ranking_table <- downloadHandler(
+    filename = function() {
+      paste(input$gene, "_", input$dataframe_subset, "_ranking_table.", input$file_format_ranking, sep = "")
+    },
+    content = function(file) {
+      rankings <- get_gene_ranking_reactive()
+      
+      if (nrow(rankings) == 0) {
+        validate(need(FALSE, showNotification(type = "error", duration = 15, closeButton = TRUE, 
+                                              ui = tags$div(
+                                                style = "font-size: 18px; padding: 20px; border-radius: 5px;",
+                                                "No data available for this gene."))))
+      } else {
+        if (input$file_format_ranking == "csv") {
+          write.csv(rankings, file, row.names = FALSE)
+        } else {
+          openxlsx::write.xlsx(rankings, file)
+        }
+      }
+    }
+    )
+
   
   
   
@@ -364,24 +392,55 @@ server <- function(input, output, session) {
   
 
   
-  # Provide download for the edges table as XLSX
-  output$download_network_edges <- downloadHandler(
+  observeEvent(input$downloadNtP, {
+    showModal(modalDialog(
+      title = "Select file format",
+      selectInput("file_format_network", "Choose format:", choices = c("Excel (.xlsx)" = "xlsx", "CSV (.csv)" = "csv")),
+      footer = tagList(
+        modalButton("Cancel"),
+        downloadButton("downloadNetworkData", "Download")
+      )
+    ))
+  })
+  
+  # Network Data Download Handler
+  output$downloadNetworkData <- downloadHandler(
     filename = function() {
-      paste(input$network_tumor, '_', input$network_dataset_type, "_edges.xlsx", sep = "")
+      if (input$file_format_network == "csv") {
+        paste(input$network_tumor, "_", input$network_dataset_type, "_NetworkData.zip", sep = "")
+      } else {
+        paste(input$network_tumor, "_", input$network_dataset_type, "_NetworkData.xlsx", sep = "")
+      }
     },
     content = function(file) {
-      write.xlsx(network_data()$edges, file)
+      edges <- network_data()$edges
+      nodes <- network_data()$nodes
+      
+      req(!is.null(edges), !is.null(nodes))
+      
+      if (input$file_format_network == "csv") {
+        # Create temp CSV files
+        edges_file <- file.path(tempdir(), "edges.csv")
+        nodes_file <- file.path(tempdir(), "nodes.csv")
+        
+        write.csv(edges, edges_file, row.names = FALSE)
+        write.csv(nodes, nodes_file, row.names = FALSE)
+        
+        # Zip the two files
+        zip::zipr(file, c(edges_file, nodes_file))
+        
+      } else {
+        # Create Excel workbook with two sheets
+        wb <- createWorkbook()
+        addWorksheet(wb, "Edges")
+        addWorksheet(wb, "Nodes")
+        
+        writeData(wb, "Edges", edges)
+        writeData(wb, "Nodes", nodes)
+        
+        saveWorkbook(wb, file)
+      }
     }
-  )
-  
-  # Provide download for the nodes table as XLSX
-  output$download_network_nodes <- downloadHandler(
-    filename = function() {
-      paste(input$network_tumor, '_', input$network_dataset_type, "_nodes.xlsx", sep = "")
-    },
-    content = function(file) {write.xlsx(network_data()$nodes, file)
-    }
-    
   )
   
   
@@ -456,8 +515,12 @@ server <- function(input, output, session) {
     
     # Use the modified function to get common genes
     common_genes <- get_common_genes_across_cancers(top_lines, num_cancers, selection = input$selected_dataframe)
-
     
+    # Validate if the table has only column names (no data rows)
+    if (nrow(common_genes) == 0) {
+      showNotification("Error: No data available", type = "error", duration = 5)
+      return(NULL)  # Prevents further execution
+    }
     
      # Return the common genes data
     return(common_genes)
@@ -541,23 +604,41 @@ server <- function(input, output, session) {
   })
   
   
-  # Provide download for the extracted data as XLSX
+  observeEvent(input$downloadCmG, {
+    showModal(modalDialog(
+      title = "Select file format",
+      selectInput("file_format_extracted", "Choose format:", choices = c("Excel (.xlsx)" = "xlsx", "CSV (.csv)" = "csv")),
+      footer = tagList(
+        modalButton("Cancel"),
+        downloadButton("download_extracted_data", "Download")
+      )
+    ))
+  })
+  
+  # Extracted Data Download Handler
   output$download_extracted_data <- downloadHandler(
     filename = function() {
-      paste("Common_Genes_", input$selected_dataframe, ".xlsx", sep = "")
+      paste("Common_Genes_", input$selected_dataframe, ".", input$file_format_extracted, sep = "")
     },
     content = function(file) {
       selected_df <- extracted_data_reactive()
       req(selected_df)
       
-      # Write each subset as a sheet in the Excel file
-      write.xlsx(selected_df, file)
+      if (input$file_format_extracted == "csv") {
+        write.csv(selected_df, file, row.names = FALSE)
+      } else {
+        openxlsx::write.xlsx(selected_df, file)
+      }
     }
   )
+
   
   output$network_legend_plot <- renderPlot({
     plot.new()
   })
+  
+  
+  
   
   # GENE NETWORK
   
@@ -685,16 +766,54 @@ server <- function(input, output, session) {
     return(data_result)
   })
   
-  output$downloadGeneTable <- downloadHandler(
+  observeEvent(input$downloadGeN, {
+    showModal(modalDialog(
+      title = "Select file format",
+      selectInput("file_format_gene", "Choose format:", choices = c("Excel (.xlsx)" = "xlsx", "CSV (.csv)" = "csv")),
+      footer = tagList(
+        modalButton("Cancel"),
+        downloadButton("downloadGeneData", "Download")
+      )
+    ))
+  })
+  
+  # Gene Interactors Download Handler
+  output$downloadGeneData <- downloadHandler(
     filename = function() {
-      paste("Gene_Interactors_", input$g_network_tumor ,"_", input$data_type_precog, "_",input$gene_sel, ".xlsx", sep = "")
+      if (input$file_format_gene == "csv") {
+        paste("Gene_Interactors_", input$g_network_tumor, "_", input$data_type_precog, "_", input$gene_sel, "_", "CSV.zip", sep = "")
+      } else {
+        paste("Gene_Interactors_", input$g_network_tumor, "_", input$data_type_precog, "_", input$gene_sel, ".xlsx", sep = "")
+      }
     },
     content = function(file) {
-      data_list <- gene_data()
+      data_nodes <- gene_data()$NODES
+      data_edges <- gene_data()$EDGES
       
-      validate(need(!is.null(data_list), "No data available for download."))
+      req(!is.null(data_nodes), !is.null(data_edges))
       
-      write.xlsx(data_list, file = file)
+      if (input$file_format_gene == "csv") {
+        # Create two separate CSV files
+        nodes_file <- file.path(tempdir(), "nodes.csv")
+        edges_file <- file.path(tempdir(), "edges.csv")
+        
+        write.csv(data_nodes, nodes_file, row.names = FALSE)
+        write.csv(data_edges, edges_file, row.names = FALSE)
+        
+        # Zip the two CSVs together for a single download
+        zip::zipr(file, c(nodes_file, edges_file))
+        
+      } else {
+        # Create a single Excel file with two sheets
+        wb <- createWorkbook()
+        addWorksheet(wb, "Nodes")
+        addWorksheet(wb, "Edges")
+        
+        writeData(wb, "Nodes", data_nodes)
+        writeData(wb, "Edges", data_edges)
+        
+        saveWorkbook(wb, file)
+      }
     }
   )
 

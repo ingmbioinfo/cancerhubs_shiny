@@ -12,7 +12,7 @@ createSidebar <- function() {
         ),
         
         # CONTACT INFO
-        div(style = "font-size: 15px; text-align: justify;",
+        div(style = "font-size: 13px; text-align: justify;",
             h4(style = "color: black; font-weight: bold; margin-top: 20px;", "Contact Info"),
             p("For questions or support, please contact:"),
             tags$ul( 
@@ -22,7 +22,7 @@ createSidebar <- function() {
         ),
         
         # RELATED LINKS
-        div(style = "font-size: 15px; text-align: justify;",
+        div(style = "font-size: 13px; text-align: justify;",
             h4(style = "color: black; font-weight: bold; margin-top: 20px;", "Related Links"),
             tags$ul(style = "list-style: none; padding-left: 0;",
                     tags$li(tags$a(href = "https://academic.oup.com/bib/article/26/1/bbae635/7918695", target = "_blank", 
@@ -41,13 +41,13 @@ createSidebar <- function() {
         ),
         
         # LICENSE
-        div(style = "font-size: 15px; text-align: justify;",
+        div(style = "font-size: 13px; text-align: justify;",
             h4(style = "color: black; font-weight: bold; margin-top: 20px;", "License"),
             p("This project is licensed under the MIT License. Copyright (c) 2024 National Institute of Molecular Genetics (INGM).")
         ),
         
         # FUNDING
-        div(style = "font-size: 15px; text-align: justify;",
+        div(style = "font-size: 13px; text-align: justify;",
             h4(style = "color: black; font-weight: bold; margin-top: 20px;", "Funding"),
             p("This research was funded by Associazione Italiana per la Ricerca sul Cancro (AIRC), under MFAG 2021 ID 26178 project to Nicola Manfrini.")
         )
@@ -108,8 +108,8 @@ createSidebar <- function() {
           DTOutput("ranking_table"),
           tableOutput("gene_info_table"),
           downloadButton("download_plot", "Download Plot (PDF)"),
-          downloadButton("download_ranking_table", "Download Ranking Table (XLSX)"),
-          downloadButton("download_pan_cancer", "Download Pan-Cancer Ranking (XLSX)")
+          actionButton("downloadRnk", "Download Ranking Table"),
+          actionButton("downloadPCR", "Download Pan-Cancer Rankings"),
         ),
         conditionalPanel(
           condition = "input.tabSelected === 'Common Genes'",
@@ -145,7 +145,7 @@ createSidebar <- function() {
                       selected = "All_Genes"),
           numericInput("num_cancers", "Min. Presence in Tumors:", value = 2),
           br(),
-          downloadButton("download_extracted_data", "Download Extracted Data (XLSX)")
+          actionButton("downloadCmG", "Download Common Genes Data") 
         ),
         conditionalPanel(
           condition = "input.tabSelected === 'Network Plot'",
@@ -172,9 +172,7 @@ createSidebar <- function() {
           numericInput("network_top_n", "Number of Top Genes:", value = 10, min = 1, max = 50),
           checkboxInput("network_mutated_interactors", "Include Only Mutated Interactors", value = TRUE),
           br(),
-          downloadButton("download_network_edges", "Download Edges Table (XLSX)"),
-          br(),
-          downloadButton("download_network_nodes", "Download Nodes Table (XLSX)")
+          actionButton("downloadNtP", "Download Network Data"),  
         ),
         conditionalPanel(
           condition = "input.tabSelected === 'Gene Network'", 
@@ -211,7 +209,7 @@ createSidebar <- function() {
           p("Here is available the network plot and the complete table of interactions for your interest gene.", style='font-size: 13px;'),
           br(),
           downloadButton("downloadGeneNetwork", "Download Network Plot Image (PDF)"),
-          downloadButton("downloadGeneTable", " Download your Gene Interactions (XLSX)"),
+          actionButton("downloadGeN", "Download Gene Interactors"),
           br(),br(),
           p("For further analysis is also available the WHOLE dataset of interactions for all the genes that match your paramters selection.", style='font-size: 13px;'), # Add the formal text
           br(),

@@ -32,19 +32,64 @@ createMainPanel <- function() {
                          hr(),
                          
                          # Feature highlights
-                         div(style = "font-size: 15px; text-align: justify;",
-                             HTML("
-             <h3>🔍 App Features</h3>
-             <p>This website allows direct interaction with CancerHubs data through several key tabs:</p>
-             <ul>
-             <li><strong>View Dataframes</strong>: Explore pre-processed gene tables for each tumor type. Choose between <em>All Genes</em>, <em>PRECOG</em>, <em>Only Mutated</em>, and <em>Only PRECOG</em> subsets. Download filtered data as Excel.</li>
-             <li><strong>Gene Ranking Analysis</strong>: Input a gene symbol to check its rank across cancers based on Network Score. Visualise and download the results, including a pan-cancer positioning plot.</li>
-             <li><strong>Common Genes Explorer</strong>: Identify genes that consistently rank in the top N positions across multiple tumors. View results in a dynamic heatmap and export them.</li>
-             <li><strong>Network Plot (3D)</strong>: Visualise a 3D network of the top-scoring genes in a tumor dataset. Interactions are mapped based on known BioGRID interactions. Node color, shape, and size encode multiple annotations.</li>
-             <li><strong>Gene-Centric Network (2D)</strong>: Explore direct interactors of any gene of interest. Visualise up to 50 interactors with igraph-style layout and download both the network image and tables.</li>
-             </ul>
-              ")
+                         
+                         tags$div(style = "font-size: 15px; text-align: justify;",
+                                  
+                                  tags$h3("🔍 App Features"),
+                                  
+                                  tags$p("This website allows direct interaction with CancerHubs data through several key tabs:"),
+                                  
+                                  tags$ul(
+                                    
+                                    tags$li(
+                                      
+                                      actionLink("go_df", strong("View Dataframes")), 
+                                      
+                                      ": Explore pre-processed gene tables for each tumor type. Choose between ", 
+                                      
+                                      em("All Genes"), ", ", em("PRECOG"), ", ", em("Only Mutated"), ", and ", em("Only PRECOG"),
+                                      
+                                      " subsets. Download filtered data as Excel."
+                                      
+                                    ),
+                                    
+                                    tags$li(
+                                      
+                                      actionLink("go_rank", strong("Gene Ranking Analysis")), 
+                                      
+                                      ": Input a gene symbol to check its rank across cancers based on Network Score. Visualise and download the results, including a pan-cancer positioning plot."
+                                      
+                                    ),
+                                    
+                                    tags$li(
+                                      
+                                      actionLink("go_common", strong("Common Genes Explorer")), 
+                                      
+                                      ": Identify genes that consistently rank in the top N positions across multiple tumors. View results in a dynamic heatmap and export them."
+                                      
+                                    ),
+                                    
+                                    tags$li(
+                                      
+                                      actionLink("go_3d", strong("Network Plot (3D)")), 
+                                      
+                                      ": Visualise a 3D network of the top-scoring genes in a tumor dataset. Interactions are mapped based on known BioGRID interactions. Node color, shape, and size encode multiple annotations."
+                                      
+                                    ),
+                                    
+                                    tags$li(
+                                      
+                                      actionLink("go_2d", strong("Gene-Centric Network (2D)")), 
+                                      
+                                      ": Explore direct interactors of any gene of interest. Visualise up to 50 interactors with igraph-style layout and download both the network image and tables."
+                                      
+                                    )
+                                    
+                                  )
+                                  
                          ),
+                         
+                         
                          
                          hr(),
                          

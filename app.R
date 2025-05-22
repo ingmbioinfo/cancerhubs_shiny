@@ -10,6 +10,7 @@ library(RColorBrewer)
 library(dplyr)
 library(tidyr)
 library(shinycssloaders)
+library(shinyjs)
 
 # Source the styles and functions from the R subdirectory
 source("R/data.R")
@@ -26,6 +27,7 @@ source("R/gene_network_download.R")
 
 # Define UI (Make sure cancerhubs_style is available here)
 ui <- fluidPage(
+  useShinyjs(),
   tags$head(
     tags$title("CancerHubs Data Explorer"),
     tags$meta(name = "keywords", 
@@ -94,6 +96,13 @@ ui <- fluidPage(
 )
 # Server logic
 server <- function(input, output, session) {
+  
+  observeEvent(input$go_df, updateTabsetPanel(session, "tabSelected", selected = "View Dataframe"))
+  observeEvent(input$go_rank, updateTabsetPanel(session, "tabSelected", selected = "Gene Ranking"))
+  observeEvent(input$go_common, updateTabsetPanel(session, "tabSelected", selected = "Common Genes"))
+  observeEvent(input$go_3d, updateTabsetPanel(session, "tabSelected", selected = "Network Plot"))
+  observeEvent(input$go_2d, updateTabsetPanel(session, "tabSelected", selected = "Gene Network"))
+  
   # Reactive to fetch the selected dataframe
   selected_data_df <- reactive({
     req(input$cancer_type_df, input$dataframe)
@@ -122,14 +131,32 @@ server <- function(input, output, session) {
   })
   
   # Provide download for the dataframe as XLSX
+  observeEvent(input$downloadBtn, {
+    showModal(modalDialog(
+      title = "Select file format",
+      selectInput("file_format", "Choose format:", choices = c("Excel (.xlsx)" = "xlsx", "CSV (.csv)" = "csv")),
+      footer = tagList(
+        modalButton("Cancel"),
+        downloadButton("download_dataframe", "Download")  # Appears inside modal
+      )
+    ))
+  })
+  
   output$download_dataframe <- downloadHandler(
     filename = function() {
-      paste(input$cancer_type_df, '_', input$dataframe, ".xlsx", sep = "")
+      paste(input$cancer_type_df, '_', input$dataframe, ".", input$file_format, sep = "")
     },
     content = function(file) {
-      write.xlsx(selected_data_df(), file)
+      data <- selected_data_df()
+      
+      if (input$file_format == "csv") {
+        write.csv(data, file, row.names = FALSE)
+      } else {
+        write.xlsx(data, file)
+      }
     }
   )
+
   
   
   

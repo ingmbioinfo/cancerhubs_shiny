@@ -718,26 +718,36 @@ server <- function(input, output, session) {
   
 
   
-  selected_file_link <- reactiveVal(NULL)
-  
-  # Observe event when user selects parameters
-  observe( {
-    link <- get_file_link(input$g_network_tumor, input$data_type_precog, input$g_network_mutated_interactors)
-    selected_file_link(link)
+  # Show a popup when user clicks download
+  observeEvent(input$downloadData, {
+    showModal(modalDialog(
+      title = "Select file format",
+      selectInput("file_format_gene", "Choose format:", choices = c("Excel (.xlsx)" = "xlsx", "CSV Folder (.zip)" = "csv_zip")),
+      footer = tagList(
+        modalButton("Cancel"),
+        downloadButton("downloadWData", "Download")
+      )
+    ))
   })
   
-  # Download link
-  output$downloadData <- downloadHandler(
+  # File Download Handler
+  output$downloadWData <- downloadHandler(
     filename = function() {
-      basename(selected_file_link())  # Extracts file name from URL
+      basename(get_file_link(input$g_network_tumor, input$data_type_precog, input$g_network_mutated_interactors, 
+                             if (input$file_format_gene == "csv_zip") "csv" else "xlsx"))
     },
     content = function(file) {
-      if (is.null(selected_file_link())) {
-        stop("No file selected.")
-      }
-      download.file(selected_file_link(), file, mode = "wb")  # Download the file
+      req(input$file_format_gene, input$g_network_tumor, input$data_type_precog, input$gene_sel)
+      
+      # Fetch the correct file (either Excel or pre-zipped CSV)
+      file_url <- get_file_link(input$g_network_tumor, input$data_type_precog, input$g_network_mutated_interactors, 
+                                if (input$file_format_gene == "csv_zip") "csv" else "xlsx")
+      
+      # Download the file directly—no need to create ZIPs dynamically!
+      download.file(file_url, file, mode = "wb")
     }
   )
+  
   
   gene_data <- reactive({
     req(input$gene_sel, input$g_network_tumor, input$data_type_precog)  # Ensure input is provided

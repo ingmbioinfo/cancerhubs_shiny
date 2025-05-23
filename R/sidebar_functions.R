@@ -213,7 +213,7 @@ createSidebar <- function() {
           br(),br(),
           p("For further analysis is also available the WHOLE dataset of interactions for all the genes that match your paramters selection.", style='font-size: 13px;'), # Add the formal text
           br(),
-          downloadButton("downloadData", "Download WHOLE Interactome Tables (XLSX)"),
+          actionButton("downloadData", "Download WHOLE Interactome Tables"),
         )
     )
   )

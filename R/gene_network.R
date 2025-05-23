@@ -252,27 +252,29 @@ create_network <- function(data, original, cancer_type, int_type, gene, include_
 
 
 
-#retrive excel
-get_file_link <- function(dataframe, int_type, include_mutated) {
-  
+
+get_file_link <- function(dataframe, int_type, include_mutated, file_format = "xlsx") {
   int_type_part <- if (int_type == "PRECOG (Mutated or Not)") {
     "precog"
   } else if (int_type == "All Genes") {
     "all_genes"
   } else if (int_type == "Only MUTATED (Not Precog)") {
     "only_mutated"
-  } else if (int_type =="Only PRECOG (Not Mutated)") { "only_precog"
+  } else if (int_type == "Only PRECOG (Not Mutated)") {
+    "only_precog"
   }
-  
   
   mutated_part <- if (include_mutated) "_mut" else ""
   
+  # Adjust base directory depending on file format
+  base_dir <- if (file_format == "xlsx") "EXCEL" else "CSV"
+  
+  # Fetch pre-zipped CSV folders instead of raw directories
   file_name <- paste0("https://github.com/ingmbioinfo/cancerhubs/raw/main/result/interactions_download/",
-                      dataframe, "_",
-                      int_type_part,
-                      mutated_part,
-                      ".xlsx"
-  )
+                      base_dir, "/", dataframe, "_",
+                      int_type_part, mutated_part,
+                      if (file_format == "xlsx") ".xlsx" else ".zip")  
+  
   return(file_name)
 }
 

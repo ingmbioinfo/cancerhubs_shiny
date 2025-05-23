@@ -1,60 +1,57 @@
 createSidebar <- function() {
   sidebarPanel(
-    div(class = "sidebar",conditionalPanel(
-      condition = "input.tabSelected === 'Introduction'",
-      div(
-        class = "logo-container",
-        style = "margin: 10px;",
-        
-        # Logo
-        div(style = "text-align: center;",
-            img(src = "cancerhubs_logo.png", height = "250px", style = "max-width: 100%;", alt = "CancerHubs Logo")
-        ),
-        
-        # CONTACT INFO
-        div(style = "font-size: 13px; text-align: justify;",
-            h4(style = "color: black; font-weight: bold; margin-top: 20px;", "Contact Info"),
-            p("For questions or support, please contact:"),
-            tags$ul( 
-              tags$li("manfrini@ingm.org"),
-              tags$li("ferrari@ingm.org"),
-              tags$li("arsuffi@ingm.org"))
-        ),
-        
-        # RELATED LINKS
-        div(style = "font-size: 13px; text-align: justify;",
-            h4(style = "color: black; font-weight: bold; margin-top: 20px;", "Related Links"),
-            tags$ul(style = "list-style: none; padding-left: 0;",
-                    tags$li(tags$a(href = "https://academic.oup.com/bib/article/26/1/bbae635/7918695", target = "_blank", 
-                                   style = "color: #0073e6; text-decoration: none;", 
-                                   "CancerHubs paper on Briefings in Bioinformatics")),
-                    tags$li(tags$a(href = "https://github.com/ingmbioinfo/cancerhubs", target = "_blank", 
-                                   style = "color: #0073e6; text-decoration: none;", 
-                                   "Updated CancerHubs Directory")),
-                    tags$li(tags$a(href = "https://github.com/ingmbioinfo/cancerhubs_shiny", target = "_blank", 
-                                   style = "color: #0073e6; text-decoration: none;", 
-                                   "Updated App Directory")),
-                    tags$li(tags$a(href = "https://github.com/ingmbioinfo/cancerhubs_paper", target = "_blank", 
-                                   style = "color: #0073e6; text-decoration: none;", 
-                                   "CancerHubs Directory as Published in the Paper"))
+    div(class = "sidebar",
+        conditionalPanel(
+          condition = "input.tabSelected === 'Introduction'",
+          div(
+            class = "logo-container",
+            style = "margin: 10px;",
+            
+            # Logo
+            div(style = "text-align: center; margin-top: 0x; padding-top: 0px;  margin-bottom: -10px;",
+                img(src = "cancerhubs_logo.png", height = "200px", style = "max-width: 100%;", alt = "CancerHubs Logo")
             )
+            ,
+            
+            # CONTACT INFO
+            div(style = "font-size: 13px; text-align: justify;",
+                h4(style = "color: black; font-weight: bold; margin-top: 20px;", "Contact Info"),
+                p("For questions or support, please contact manfrini@ingm.org, ferrari@ingm.org or arsuffi@ingm.org")),
+            
+            # RELATED LINKS
+            div(style = "font-size: 13px; text-align: justify;",
+                h4(style = "color: black; font-weight: bold; margin-top: 20px;", "Related Links"),
+                tags$ul(style = "list-style: none; padding-left: 0;",
+                        tags$li(tags$a(href = "https://academic.oup.com/bib/article/26/1/bbae635/7918695", target = "_blank", 
+                                       style = "color: #0073e6; text-decoration: none;", 
+                                       "CancerHubs paper on Briefings in Bioinformatics")),
+                        tags$li(tags$a(href = "https://github.com/ingmbioinfo/cancerhubs", target = "_blank", 
+                                       style = "color: #0073e6; text-decoration: none;", 
+                                       "Updated CancerHubs Directory")),
+                        tags$li(tags$a(href = "https://github.com/ingmbioinfo/cancerhubs_shiny", target = "_blank", 
+                                       style = "color: #0073e6; text-decoration: none;", 
+                                       "Updated App Directory")),
+                        tags$li(tags$a(href = "https://github.com/ingmbioinfo/cancerhubs_paper", target = "_blank", 
+                                       style = "color: #0073e6; text-decoration: none;", 
+                                       "CancerHubs Directory as Published in the Paper"))
+                )
+            ),
+            
+            # LICENSE
+            div(style = "font-size: 13px; text-align: justify;",
+                h4(style = "color: black; font-weight: bold; margin-top: 20px;", "License"),
+                p("This project is licensed under the MIT License. Copyright (c) 2024 National Institute of Molecular Genetics (INGM).")
+            ),
+            
+            # FUNDING
+            div(style = "font-size: 13px; text-align: justify;",
+                h4(style = "color: black; font-weight: bold; margin-top: 20px;", "Funding"),
+                p("This research was funded by Associazione Italiana per la Ricerca sul Cancro (AIRC), under MFAG 2021 ID 26178 project to Nicola Manfrini.")
+            )
+          )
+          
+          
         ),
-        
-        # LICENSE
-        div(style = "font-size: 13px; text-align: justify;",
-            h4(style = "color: black; font-weight: bold; margin-top: 20px;", "License"),
-            p("This project is licensed under the MIT License. Copyright (c) 2024 National Institute of Molecular Genetics (INGM).")
-        ),
-        
-        # FUNDING
-        div(style = "font-size: 13px; text-align: justify;",
-            h4(style = "color: black; font-weight: bold; margin-top: 20px;", "Funding"),
-            p("This research was funded by Associazione Italiana per la Ricerca sul Cancro (AIRC), under MFAG 2021 ID 26178 project to Nicola Manfrini.")
-        )
-      )
-      
-      
-    ),
         conditionalPanel(
           condition = "input.tabSelected === 'View Dataframe'",
           h4(tags$span(style="font-weight: bold", "View Dataframe")),

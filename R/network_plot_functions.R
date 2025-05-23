@@ -189,18 +189,10 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
       zaxis = list(title = "", showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE)
     ),
     showlegend = TRUE,
-    margin = list(r = 250, b = 150),  # Add more space to the right and bottom
-    annotations = list(
-      list(
-        x = 1.35, y = 0.25, text = "Shape Legend:\nCircle: PRECOG\nSquare: Non-PRECOG",
-        showarrow = FALSE, xref = "paper", yref = "paper", align = "right", font = list(size = 9)
-      ),
-      list(
-        x = 1.35, y = 0.10, text = "Size Legend:\nLarge: Mutated (ORF/NON_ORF/BOTH)\nSmall: Non-mutated",
-        showarrow = FALSE, xref = "paper", yref = "paper", align = "right", font = list(size = 9)
-      )
-    )
+    margin = list(r = 250, b = 150)
   )
+  
+  
   
   # Render the interactive 3D plot
   fig

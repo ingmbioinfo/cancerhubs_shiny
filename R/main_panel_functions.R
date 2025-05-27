@@ -19,7 +19,7 @@ createMainPanel <- function() {
              <li><strong>Only PRECOG</strong>: Genes which are significant for PRECOG Z-score that are not found mutated in the dataset.</li>
              </ul>
 
-             <p>All genes are ranked using a <strong>Network Score</strong>, , which quantifies how many of their direct interaction partners are mutated within a given tumor type. By integrating protein–protein interaction data from <a href='https://thebiogrid.org/' target='_blank'>BioGRID</a> with tumor-specific mutation profiles, this score highlights genes that are highly connected to dysfunctional or altered pathways—pointing to their potential as central regulators or therapeutic targets in cancer biology.</p>
+             <p>All genes are ranked using a <strong>Network Score</strong>, which quantifies how many of their direct interaction partners are mutated within a given tumor type. By integrating protein–protein interaction data from <a href='https://thebiogrid.org/' target='_blank'>BioGRID</a> with tumor-specific mutation profiles, this score highlights genes that are highly connected to dysfunctional or altered pathways, pointing to their potential as central regulators or therapeutic targets in cancer biology.</p>
              "), 
                          hr(),
                          
@@ -41,7 +41,7 @@ createMainPanel <- function() {
                                       
                                       em("All Genes"), ", ", em("PRECOG"), ", ", em("Only Mutated"), ", and ", em("Only PRECOG"),
                                       
-                                      " subsets. Download filtered data as Excel."
+                                      " subsets. Download filtered data as XLSX or CSV."
                                       
                                     ),
                                     

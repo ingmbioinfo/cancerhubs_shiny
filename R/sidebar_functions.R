@@ -159,7 +159,7 @@ createSidebar <- function() {
       <li>Switch the coloring of nodes to show their Network Score or their <strong>PRECOG metaZ</strong></li>
     </ul>
 
-    <p>All network data — including the nodes and their connections — can be downloaded as Excel tables. For image download, use the toolbar in the top-right corner of the network panel.</p>
+    <p>All network data, including the nodes and their connections, can be downloaded both as Excel or CSV tables. For image download, use the toolbar in the top-right corner of the network panel.</p>
   </div>
 "),
           br(),
@@ -179,7 +179,7 @@ createSidebar <- function() {
     <p>This panel allows you to explore the interaction partners of a specific gene of interest, selected from the CancerHubs dataset.</p>
 
     <p>The central input genes are selected through the Select Dataset dropdown, and are sourced from the already established CancerHubs categories. 
-    <br>Up to <strong>50 interactors</strong> are shown, prioritised — when possible — by <strong>Network Score</strong>. Interactors without scores are displayed only if no ranked alternatives are available.
+    <br>Up to <strong>50 interactors</strong> are shown, prioritised, when possible, by <strong>Network Score</strong>. Interactors without scores are displayed only if no ranked alternatives are available.
     These interactors are not relevant to CancerHubs nor found in the previously displayed tables. 
     <br>In the downloadable tables all the interactors are included, whether ranked or not. </p>
      

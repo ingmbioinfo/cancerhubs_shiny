@@ -13,7 +13,7 @@ This Shiny application provides an interactive interface for exploring results f
 ## 🔍 Features
 
 - **View Dataframes**  
-  Explore pre-processed gene tables for each tumour type. Choose between `All Genes`, `PRECOG`, `Only Mutated`, and `Only PRECOG` subsets. Download filtered data as Excel.
+  Explore pre-processed gene tables for each tumour type. Choose between _All Genes_, _PRECOG_, _Only Mutated_, and _Only PRECOG_ subsets. Download filtered data as Excel.
 
 - **Gene Ranking Analysis**  
   Input a gene symbol to check its rank across cancers based on Network Score. Visualise and download the results, including a pan-cancer positioning plot.

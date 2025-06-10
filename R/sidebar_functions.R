@@ -68,7 +68,7 @@ createSidebar <- function() {
   </div>
 "),
           br(),
-          selectInput("cancer_type_df", "Select Tumor:", choices = names(data)),
+          selectInput("cancer_type_df", "Select Tumour:", choices = names(data)),
           selectInput("dataframe", "Select Dataset Type:",
                       choices = c("All Genes" = "All_Genes", 
                                   "PRECOG (Mutated or Not)" = "PRECOG", 
@@ -120,7 +120,7 @@ createSidebar <- function() {
     <p>By adjusting the parameters, you can:</p>
     <ul>
       <li>Select how many <strong>top-ranking</strong> genes to consider from each tumour type</li>
-      <li>Set a threshold for how many <strong>tumors</strong> a gene must appear in to be included</li>
+      <li>Set a threshold for how many <strong>tumours</strong> a gene must appear in to be included</li>
     </ul>
 
     <p>The output includes:</p>
@@ -140,7 +140,7 @@ createSidebar <- function() {
                                   "Only MUTATED (Not Precog)" = "Non_PRECOG",
                                   "Only PRECOG (Not Mutated)" = "Only_PRECOG"), 
                       selected = "All_Genes"),
-          numericInput("num_cancers", "Min. Presence in Tumors:", value = 2),
+          numericInput("num_cancers", "Min. Presence in Tumours:", value = 2),
           br(),
           actionButton("downloadCmG", "Download Common Genes Data") 
         ),
@@ -156,16 +156,16 @@ createSidebar <- function() {
     <ul>
       <li>Choose the number of <strong>top genes</strong> to visualise</li>
       <li>Restrict nodes to <strong>mutated interactors</strong> only</li>
-      <li>Switch the coloring of nodes to show their Network Score or their <strong>PRECOG metaZ</strong></li>
+      <li>Switch the colouring of nodes to show their Network Score or their <strong>PRECOG metaZ</strong></li>
     </ul>
 
     <p>All network data, including the nodes and their connections, can be downloaded both as Excel or CSV tables. For image download, use the toolbar in the top-right corner of the network panel.</p>
   </div>
 "),
           br(),
-          selectInput("network_tumor", "Select Tumor:", choices = names(data)),
+          selectInput("network_tumor", "Select Tumour:", choices = names(data)),
           selectInput("network_dataset_type", "Select Dataset Type:",  choices = c("All Genes" = "All_Genes", "PRECOG (Mutated or Not)" = "PRECOG",  "Only MUTATED (Not Precog)" = "Non_PRECOG","Only PRECOG (not Mutated)" = "Only_PRECOG")),
-          selectInput("network_color_by", "Color by:", choices = c("network_score", "precog_metaZ")),
+          selectInput("network_color_by", "Colour by:", choices = c("network_score", "precog_metaZ")),
           numericInput("network_top_n", "Number of Top Genes:", value = 10, min = 1, max = 50),
           checkboxInput("network_mutated_interactors", "Include Only Mutated Interactors", value = TRUE),
           br(),
@@ -196,7 +196,7 @@ createSidebar <- function() {
 "),
           
           br(),
-          selectInput("g_network_tumor", "Select Tumor:", choices = names(data)),
+          selectInput("g_network_tumor", "Select Tumour:", choices = names(data)),
           selectInput("data_type_precog", "Select Dataset Type:", choices = c("All Genes", "PRECOG (Mutated or Not)","Only MUTATED (Not Precog)", "Only PRECOG (Not Mutated)")),
           textInput("gene_sel", "Enter Gene Name:", value = "TP53"),
           checkboxInput("g_network_mutated_interactors", "Include Only Mutated Interactors", value = TRUE),

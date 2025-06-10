@@ -1,12 +1,12 @@
 plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Genes", top_n = 10, mutated_interactors = TRUE, color_by = "network_score") {
   # Check if the selected tumor exists in the data
   if (!tumor %in% names(data)) {
-    stop("Selected tumor is not available in the data")
+    stop("Selected tumour is not available in the data")
   }
   
   # Check if the selected dataset type exists in the tumor data
   if (!dataset_type %in% names(data[[tumor]])) {
-    stop("Selected dataset type is not available for the tumor")
+    stop("Selected dataset type is not available for the tumour")
   }
   
   # Extract data for the selected tumor and dataset type
@@ -51,7 +51,7 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
   
   # Create an igraph object from the nodes and edges
   if (length(edges) == 0) {
-    validate( need (FALSE, "The selected top genes for this tumor do not interact with each other.\n Please select more genes or change the dataset"))
+    validate( need (FALSE, "The selected top genes for this tumour do not interact with each other.\n Please select more genes or change the dataset"))
   }
   
   edges_matrix <- do.call(rbind, edges)

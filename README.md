@@ -3,7 +3,7 @@
 # CancerHubs Data Explorer
 
 Welcome to the **CancerHubs Data Explorer**!  
-This Shiny application provides an interactive interface for exploring results from the [CancerHubs project](https://github.com/ingmbioinfo/cancerhubs), including ranked gene data across tumor types, network visualisations, and shared hubs.
+This Shiny application provides an interactive interface for exploring results from the [CancerHubs project](https://github.com/ingmbioinfo/cancerhubs), including ranked gene data across tumour types, network visualisations, and shared hubs.
 
 🧪 **Live App**: [https://cancerhubs.app/](https://cancerhubs.app/)  
 📦 **Cancerhubs Main Repository**: [https://github.com/ingmbioinfo/cancerhubs](https://github.com/ingmbioinfo/cancerhubs)
@@ -13,16 +13,16 @@ This Shiny application provides an interactive interface for exploring results f
 ## 🔍 Features
 
 - **View Dataframes**  
-  Explore pre-processed gene tables for each tumor type. Choose between `All Genes`, `PRECOG`, `Only Mutated`, and `Only PRECOG` subsets. Download filtered data as Excel.
+  Explore pre-processed gene tables for each tumour type. Choose between `All Genes`, `PRECOG`, `Only Mutated`, and `Only PRECOG` subsets. Download filtered data as Excel.
 
 - **Gene Ranking Analysis**  
   Input a gene symbol to check its rank across cancers based on Network Score. Visualise and download the results, including a pan-cancer positioning plot.
 
 - **Common Genes Explorer**  
-  Identify genes that consistently rank in the top N positions across multiple tumors. View results in a dynamic heatmap and export them.
+  Identify genes that consistently rank in the top N positions across multiple tumours. View results in a dynamic heatmap and export them.
 
 - **Network Plot (3D)**  
-  Visualise a 3D network of the top-scoring genes in a tumor dataset. Interactions are mapped based on known BioGRID interactions. Node color, shape, and size encode multiple annotations.
+  Visualise a 3D network of the top-scoring genes in a tumour dataset. Interactions are mapped based on known BioGRID interactions. Node colour, shape, and size encode multiple annotations.
 
 - **Gene-Centric Network (2D)**  
   Explore direct interactors of any gene of interest. Visualise up to 50 interactors with igraph-style layout and download both the network image and tables.

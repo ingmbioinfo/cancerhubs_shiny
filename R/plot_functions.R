@@ -13,7 +13,7 @@ to_ordinal_expression_text <- function(x) {
 
 create_ranking_plot <- function(rankings, gene, dataframe_subset) {
   if (nrow(rankings) == 0) {
-    plot(1, type = "n", xlab = "", ylab = "", main = "Gene not found in any tumor type")
+    plot(1, type = "n", xlab = "", ylab = "", main = "Gene not found in any tumour type")
   } else {
     
     rankings$new_score = (1 - rankings$Rank/ rankings$Total)*100

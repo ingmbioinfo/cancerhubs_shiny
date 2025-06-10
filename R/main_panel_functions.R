@@ -9,17 +9,17 @@ createMainPanel <- function() {
                      div(style = "font-size: 13px; text-align: justify;",
                          HTML("
              <h4>🧿️ Overview</h4>
-             <p><strong>CancerHubs Data Explorer</strong> is a shiny app which provides an interactive interface for exploring results from the <a href='https://github.com/ingmbioinfo/cancerhubs' target='_blank'>CancerHubs project</a>, now extended to include <strong>11 tumor types</strong>.</p>
+               <p><strong>CancerHubs Data Explorer</strong> is a shiny app which provides an interactive interface for exploring results from the <a href='https://github.com/ingmbioinfo/cancerhubs' target='_blank'>CancerHubs project</a>, now extended to include <strong>11 tumour types</strong>.</p>
 
              <p>The following gene subsets are available for exploration:</p>
              <ul>
-             <li><strong>All Genes</strong>: The complete list of genes selected by the CancerHubs framework, scored per tumor, regardless of mutation status or external annotation.</li>
+               <li><strong>All Genes</strong>: The complete list of genes selected by the CancerHubs framework, scored per tumour, regardless of mutation status or external annotation.</li>
              <li><strong>PRECOG</strong>: Genes annotated by the <a href='https://precog.stanford.edu/' target='_blank'>PRECOG</a> database, reflecting significant prognostic associations.</li>
-             <li><strong>Only Mutated</strong>: Genes identified as mutated in the tumor dataset, excluding those in PRECOG set.</li>
+               <li><strong>Only Mutated</strong>: Genes identified as mutated in the tumour dataset, excluding those in PRECOG set.</li>
              <li><strong>Only PRECOG</strong>: Genes which are significant for PRECOG Z-score that are not found mutated in the dataset.</li>
              </ul>
 
-             <p>All genes are ranked using a <strong>Network Score</strong>, which quantifies how many of their direct interaction partners are mutated within a given tumor type. By integrating protein–protein interaction data from <a href='https://thebiogrid.org/' target='_blank'>BioGRID</a> with tumor-specific mutation profiles, this score highlights genes that are highly connected to dysfunctional or altered pathways, pointing to their potential as central regulators or therapeutic targets in cancer biology.</p>
+               <p>All genes are ranked using a <strong>Network Score</strong>, which quantifies how many of their direct interaction partners are mutated within a given tumour type. By integrating protein–protein interaction data from <a href='https://thebiogrid.org/' target='_blank'>BioGRID</a> with tumour-specific mutation profiles, this score highlights genes that are highly connected to dysfunctional or altered pathways, pointing to their potential as central regulators or therapeutic targets in cancer biology.</p>
              "), 
                          hr(),
                          
@@ -37,7 +37,7 @@ createMainPanel <- function() {
                                       
                                       actionLink("go_df", strong("View Dataframes")), 
                                       
-                                      ": Explore pre-processed gene tables for each tumor type. Choose between ", 
+                                        ": Explore pre-processed gene tables for each tumour type. Choose between ",
                                       
                                       em("All Genes"), ", ", em("PRECOG"), ", ", em("Only Mutated"), ", and ", em("Only PRECOG"),
                                       
@@ -57,7 +57,7 @@ createMainPanel <- function() {
                                       
                                       actionLink("go_common", strong("Common Genes Explorer")), 
                                       
-                                      ": Identify genes that consistently rank in the top N positions across multiple tumors. View results in a dynamic heatmap and export them."
+                                      ": Identify genes that consistently rank in the top N positions across multiple tumours. View results in a dynamic heatmap and export them."
                                       
                                     ),
                                     
@@ -65,7 +65,7 @@ createMainPanel <- function() {
                                       
                                       actionLink("go_3d", strong("Network Plot (3D)")), 
                                       
-                                      ": Visualise a 3D network of the top-scoring genes in a tumor dataset. Interactions are mapped based on known BioGRID interactions. Node color, shape, and size encode multiple annotations."
+                                      ": Visualise a 3D network of the top-scoring genes in a tumour dataset. Interactions are mapped based on known BioGRID interactions. Node colour, shape, and size encode multiple annotations."
                                       
                                     ),
                                     

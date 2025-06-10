@@ -701,7 +701,11 @@ server <- function(input, output, session) {
              main = paste("Top50 Interactors of", input$gene_sel))
         legend(
           x = 0.6, y = -1,
-          legend = c(input$gene_sel,"Network Score > 0", "Network Score = 0 or Not Available"),
+          legend = c(
+            input$gene_sel,
+            expression(bold('Network Score')~'> 0'),
+            expression(bold('Network Score')~'= 0 or Not Available')
+          ),
           col = c( "pink","#83C9C8", "#C9E8E7"),
           pch = 21,
           pt.bg = c("pink","#83C9C8", "#C9E8E7"),

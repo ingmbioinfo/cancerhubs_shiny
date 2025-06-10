@@ -113,7 +113,7 @@ createSidebar <- function() {
           h4(tags$span(style="font-weight: bold", "Common Genes")),
           HTML("
   <div style='font-size: 13px;'>
-    <p>This panel helps identify genes that are ranked among the most relevant (Top), on the basis of their Network Score, across multiple tumour types.</p>
+    <p>This panel helps identify genes that are ranked among the most relevant (Top), on the basis of their <strong>Network Score</strong>, across multiple tumour types.</p>
 
     <p>Genes are selected based on their <strong>Network Score</strong>, which reflects their importance in tumour-specific interaction networks.</p>
 
@@ -156,7 +156,7 @@ createSidebar <- function() {
     <ul>
       <li>Choose the number of <strong>top genes</strong> to visualise</li>
       <li>Restrict nodes to <strong>mutated interactors</strong> only</li>
-      <li>Switch the colouring of nodes to show their Network Score or their <strong>PRECOG metaZ</strong></li>
+      <li>Switch the colouring of nodes to show their <strong>Network Score</strong> or their <strong>PRECOG metaZ</strong></li>
     </ul>
 
     <p>All network data, including the nodes and their connections, can be downloaded both as Excel or CSV tables. For image download, use the toolbar in the top-right corner of the network panel.</p>

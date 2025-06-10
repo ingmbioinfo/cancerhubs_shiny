@@ -35,7 +35,7 @@ createMainPanel <- function() {
                                     
                                     tags$li(
                                       
-                                      actionLink("go_df", strong("View Dataframes")), 
+                                      actionLink("go_df", strong("View Dataframe")),
                                       
                                         ": Explore pre-processed gene tables for each tumour type. Choose between ",
                                       
@@ -47,7 +47,7 @@ createMainPanel <- function() {
                                     
                                     tags$li(
                                       
-                                      actionLink("go_rank", strong("Gene Ranking Analysis")), 
+                                      actionLink("go_rank", strong("Gene Ranking")),
                                       
                                       ": Input a gene symbol to check its rank across cancers based on <strong>Network Score</strong>. Visualise and download the results, including a pan-cancer positioning plot."
                                       
@@ -55,7 +55,7 @@ createMainPanel <- function() {
                                     
                                     tags$li(
                                       
-                                      actionLink("go_common", strong("Common Genes Explorer")), 
+                                      actionLink("go_common", strong("Common Genes")),
                                       
                                       ": Identify genes that consistently rank in the top N positions across multiple tumours. View results in a dynamic heatmap and export them."
                                       
@@ -71,7 +71,7 @@ createMainPanel <- function() {
                                     
                                     tags$li(
                                       
-                                      actionLink("go_2d", strong("Gene-Centric Network (2D)")), 
+                                      actionLink("go_2d", strong("Gene Network (2D)")),
                                       
                                       ": Explore direct interactors of any gene of interest. Visualise up to 50 interactors with igraph-style layout and download both the network image and tables."
                                       

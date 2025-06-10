@@ -88,9 +88,9 @@ ui <- fluidPage(
     class = "footer",
     style = "position: fixed; bottom: 0; width: 100%; background: #f5f9fc; text-align: center; padding: 8px;",
     HTML(
-      "N.B.: This app relies on mutational data that do not account for Copy Number Variations. Consequently, neither the network score-based rankings nor the pan-cancer score considers them."
-      
-    ) 
+      "N.B.: This app relies on mutational data that do not account for Copy Number Variations. Consequently, neither the Network Score-based rankings nor the Pan-Cancer Score consider them."
+
+    )
     
   )
 )
@@ -581,7 +581,10 @@ server <- function(input, output, session) {
     heatmaps <- analysis_result()
     selected <- selected_df()
     
-    if (is.null(heatmaps[[selected]]) == TRUE) {validate( need(FALSE, paste("No genes found in", selected, "with your selection! \n Please change dataset or tumour count.")))}
+    if (is.null(heatmaps[[selected]]) == TRUE) {
+      validate(need(FALSE, paste("No genes found in", selected,
+                               "with your selection! \n Please change dataset or tumour count.")))
+    }
     
     heatmap <- heatmaps[[selected]]
   

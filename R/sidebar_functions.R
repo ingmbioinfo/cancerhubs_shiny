@@ -126,7 +126,7 @@ createSidebar <- function() {
     <p>The output includes:</p>
     <ul>
       <li>A downloadable <strong>table</strong> listing the selected genes and the tumour types in which they recur</li>
-      <li>An interactive <strong>heatmap</strong> showing gene presence across tumours (for the image download click on the top-rigth corner of the plot)* </li>
+      <li>An interactive <strong>heatmap</strong> showing gene presence across tumours (for the image download click on the top-right corner of the plot)* </li>
     </ul>
 
     <p>*The number of top genes selected also determines the number of rows in this heatmap. </p>

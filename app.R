@@ -590,7 +590,7 @@ server <- function(input, output, session) {
     
     plotly_heatmap <- heatmap
     
-    plotly_heatmap %>%
+    plotly_heatmap <- plotly_heatmap %>%
       config(
         toImageButtonOptions = list(
           format = "svg",  # Format can be png, jpeg, etc.

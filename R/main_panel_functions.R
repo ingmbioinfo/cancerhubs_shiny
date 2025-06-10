@@ -49,7 +49,7 @@ createMainPanel <- function() {
                                       
                                       actionLink("go_rank", strong("Gene Ranking Analysis")), 
                                       
-                                      ": Input a gene symbol to check its rank across cancers based on Network Score. Visualise and download the results, including a pan-cancer positioning plot."
+                                      ": Input a gene symbol to check its rank across cancers based on <strong>Network Score</strong>. Visualise and download the results, including a pan-cancer positioning plot."
                                       
                                     ),
                                     
@@ -167,9 +167,9 @@ createMainPanel <- function() {
                      div(style = "background-color: pink; width: 20px; height: 20px; margin-right: 5px; border-radius: 50% ;"),
                      span("Input Gene"),
                      div(style = "background-color: #83C9C8; width: 20px; height: 20px; margin-left: 20px; margin-right: 5px;border-radius: 50% ;"),
-                     span("Network Score > 0"),
+                     span(tags$strong("Network Score > 0")),
                      div(style = "background-color: #C9E8E7; width: 20px; height: 20px; margin-left: 20px; margin-right: 5px;border-radius: 50%;"),
-                     span("Network Score = 0 or Not Available"),
+                     span(tags$strong("Network Score = 0 or Not Available")),
                      br(),br(),br(),br(),
                    )
                    

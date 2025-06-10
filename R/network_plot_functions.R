@@ -139,7 +139,7 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
       cmin = if (color_by == "precog_metaZ") min(metaz_values) else min(scores),
       cmax = if (color_by == "precog_metaZ") max(metaz_values) else max(scores),
       colorbar = list(
-        title = if (color_by == "network_score") "Network Score" else "Precog MetaZ",
+        title = if (color_by == "network_score") "<b>Network Score</b>" else "Precog MetaZ",
         thickness = 10,
         len = 0.3,
         x = 1.3  # Move colorbar further to the right

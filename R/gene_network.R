@@ -41,14 +41,14 @@ create_network <- function(data, original, cancer_type, int_type, gene, include_
     }
     
     if (length(interactors_gene) == 0) {
-      validate(need(FALSE,paste(gene, "is not present in this dataset!\n Please check the spelling or select a different tumor/dataset type.")))
+      validate(need(FALSE,paste(gene, "is not present in this dataset!\n Please check the spelling or select a different tumour/dataset type.")))
     }
     
     # Extract interactors
     interactors <- unlist(interactors_gene)
     
     if (length(interactors) == 0) {
-      validate(need(FALSE,paste(gene, "has no interactors in this dataset.\n Please select a different tumor or dataset type.")))
+      validate(need(FALSE,paste(gene, "has no interactors in this dataset.\n Please select a different tumour or dataset type.")))
     }
   
   
@@ -111,7 +111,7 @@ create_network <- function(data, original, cancer_type, int_type, gene, include_
     }
     
     if (length(interactors_gene) == 0) {
-      validate(need(FALSE,paste(gene, "is not present in this dataset!\n Please select a different dataset or tumor.")))
+      validate(need(FALSE,paste(gene, "is not present in this dataset!\n Please select a different dataset or tumour.")))
     }
     
     # Extract interactors

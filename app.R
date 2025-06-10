@@ -549,7 +549,7 @@ server <- function(input, output, session) {
                        ui = tags$div(
                          style = "font-size: 15px; padding: 15px; border-radius: 5px;",
                          tags$p(
-                           'The number of extracted lines is higher than 50, the visualization may be affected!', 
+                           'The number of extracted lines is higher than 50, the visualisation may be affected!',
                            br(),
                            'Complete data is still available for download.'
                          )
@@ -581,7 +581,7 @@ server <- function(input, output, session) {
     heatmaps <- analysis_result()
     selected <- selected_df()
     
-    if (is.null(heatmaps[[selected]]) == TRUE) {validate( need(FALSE, paste("No genes found in", selected, "with your selection! \n Please change dataset or tumor count.")))}
+    if (is.null(heatmaps[[selected]]) == TRUE) {validate( need(FALSE, paste("No genes found in", selected, "with your selection! \n Please change dataset or tumour count.")))}
     
     heatmap <- heatmaps[[selected]]
   

@@ -12,19 +12,19 @@ This Shiny application provides an interactive interface for exploring results f
 
 ## 🔍 Features
 
-- **View Dataframes**  
+- **View Dataframe**
   Explore pre-processed gene tables for each tumour type. Choose between _All Genes_, _PRECOG_, _Only Mutated_, and _Only PRECOG_ subsets. Download filtered data as Excel.
 
-- **Gene Ranking Analysis**
+- **Gene Ranking**
   Input a gene symbol to check its rank across cancers based on **Network Score**. Visualise and download the results, including a pan-cancer positioning plot.
 
-- **Common Genes Explorer**  
+- **Common Genes**
   Identify genes that consistently rank in the top N positions across multiple tumours. View results in a dynamic heatmap and export them.
 
 - **Network Plot (3D)**  
   Visualise a 3D network of the top-scoring genes in a tumour dataset. Interactions are mapped based on known BioGRID interactions. Node colour, shape, and size encode multiple annotations.
 
-- **Gene-Centric Network (2D)**  
+- **Gene Network (2D)**
   Explore direct interactors of any gene of interest. Visualise up to 50 interactors with igraph-style layout and download both the network image and tables.
 
 ---

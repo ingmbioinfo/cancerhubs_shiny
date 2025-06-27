@@ -1,4 +1,5 @@
-# CancerHubs Data Explorer User Manual
+<h1 align="center">CancerHubs Data Explorer User Manual</h1>
+
 <p align="center">
   <img src="www/cancerhubs_logo.png" width="300">
 </p>

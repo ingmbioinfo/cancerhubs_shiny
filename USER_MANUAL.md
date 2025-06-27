@@ -45,12 +45,24 @@ Throughout the application you can filter results based on predefined gene categ
 
 ### 5.1 View Dataframe
 
+In this section, you can explore the original datasets used throughout the CancerHubs analysis.
+You can use this panel to:
+
 1. Select a tumour type from the dropdown menu.
 2. Pick a **Gene Subset** (see above) to focus on a particular group of genes.
 3. Explore the table by searching or sorting any column.
 4. Use **Download Dataframe** to export the visible table as XLSX or CSV.
 
 ### 5.2 Gene Ranking
+
+This panel allows you to investigate the rank of any gene of interest across all tumour types available in the CancerHubs dataset.
+Each gene is ranked within each tumour type according to its Network Score, reflecting how central and biologically relevant it is, based on its interactions with other genes in that specific dataset.
+You can view:
+
+1. A plot showing the gene's rank (and its percentile) across selected tumour types
+2. The Pan-Cancer Score, summarising the ranks across all tumours
+
+You can use this panel to:
 
 1. Enter a gene symbol in the input box.
 2. Choose the **Gene Subset** for ranking (All Genes, PRECOG, Only Mutated or Only PRECOG).
@@ -59,12 +71,22 @@ Throughout the application you can filter results based on predefined gene categ
 
 ### 5.3 Common Genes
 
+This panel helps identify genes that are ranked among the most relevant (Top), on the basis of their Network Score, across multiple tumour types.
+Genes are selected based on their Network Score, which reflects their importance in tumour-specific interaction networks.
+
+You can use this panel to:
+
 1. Select a **Gene Subset** and specify how many top genes to extract from each tumour type.
 2. Set the minimum number of tumours a gene must appear in.
 3. View the interactive heatmap showing presence across tumours.
 4. Download the resulting table for offline analysis.
 
 ### 5.4 Network Plot (3D)
+
+This panel displays an interactive network of the top-ranking genes (based on Network Score) for a selected tumour type.
+Each node represents a gene, and edges indicate known interactions among the selected top genes.
+
+You can use this panel to:
 
 1. Choose a tumour dataset and the **Gene Subset** to visualise.
 2. Adjust the number of top-scoring genes and decide whether to include only mutated interactors.
@@ -73,10 +95,15 @@ Throughout the application you can filter results based on predefined gene categ
 
 ### 5.5 Gene Network (2D)
 
+This panel allows you to explore the interaction partners of a specific gene of interest, selected from the CancerHubs dataset.
+Up to 50 interactors are shown, prioritised, when possible, by Network Score. Interactors without scores are displayed only if no ranked alternatives are available. 
+These interactors are not relevant to CancerHubs nor found in the previously displayed tables.
+
+You can use this panel to:
+
 1. Select a tumour type and **Gene Subset**, then enter the central gene.
 2. Optionally restrict to mutated interactors and toggle cross-connections among interactors.
-3. Up to 50 interactors are shown; adjust this limit using the slider.
-4. Download the network image, the selected interactors table or the full interactome.
+3. Download the network image, the selected interactors table or the full interactome.
 
 ## 6. Data Sources
 

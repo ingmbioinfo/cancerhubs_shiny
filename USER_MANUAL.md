@@ -6,8 +6,15 @@ This guide provides a walkthrough for using the **CancerHubs Data Explorer** onl
 
 ## 1. Overview
 
-The CancerHubs Data Explorer is an interactive web application for exploring pre-computed gene interaction data derived from the CancerHubs project. Key features include ranking genes across tumour types, visualising gene networks, and exporting processed tables.
-Genes are ranked using a **Network Score**, which counts how many of their direct interactors are mutated in each tumour type. Highly connected genes with many mutated neighbours are prioritised as potential hubs.
+The **CancerHubs Data Explorer** is an interactive web application for exploring pre-computed data from the *CancerHubs* project—a computational framework designed to predict proteins and pathways involved in cancer.
+
+By integrating **mutational**, **interactomic**, and **expression–prognosis correlation** data, this method ranks genes based on a **Network Score**, which reflects the number of direct interactors that are mutated in each tumour type. This scoring defines **hubs of mutated proteins** with potential relevance for cancer research and therapy.
+
+### Key Features:
+
+- **Ranking genes across tumour types**
+- **Visualising gene interaction networks**
+- **Exporting processed data tables**
 
 ## 2. Accessing the App
 
@@ -97,4 +104,4 @@ For assistance, contact the maintainers listed in the README file. Contributions
 
 ---
 
-*Last updated: 2025*
+*Last updated: 27/06/2025*

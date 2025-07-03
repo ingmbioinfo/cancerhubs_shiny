@@ -133,31 +133,8 @@ createMainPanel <- function() {
                    br(),
                    div(style = "display: flex; justify-content: center; width: 100%;",
                        plotlyOutput("network_plot", height = "600px") %>% withSpinner(color = "#0A9396")),
-                   textOutput("top_n_feedback"),
-                   
-                   # Static legend (shape + size)
-                   div(style = "display: flex; justify-content: center; gap: 50px; flex-wrap: wrap; align-items: center; font-size: 14px;",
-                       
-                       # Shape legend
-                       div(style = "display: flex; align-items: center;",
-                           div(style="width: 20px; height: 20px; border-radius: 50%; background-color: #d4ecf9; border: 1px solid white; margin-right: 5px;"),
-                           span("PRECOG (circle)")
-                       ),
-                       div(style = "display: flex; align-items: center;",
-                           div(style="width: 20px; height: 20px; background-color: #d4ecf9; border: 1px solid white; margin-right: 5px;"),
-                           span("Non-PRECOG (square)")
-                       ),
-                       
-                       # Size legend
-                       div(style = "display: flex; align-items: center; margin-left: 30px;",
-                           div(style="width: 20px; height: 20px; border-radius: 50%; background-color: #d4ecf9; border: 1px solid white; margin-right: 5px;"),
-                           span("Mutated (large)")
-                       ),
-                       div(style = "display: flex; align-items: center;",
-                           div(style="width: 12px; height: 12px; border-radius: 50%; background-color: #d4ecf9; border: 1px solid white; margin-right: 5px;"),
-                           span("Non-mutated (small)")
-                       )
-                   )
+                   textOutput("top_n_feedback")
+                
           ),
           tabPanel("Gene Network", value = "Gene Network",
                    plotOutput("gene_network", width = "800px", height = "800px") %>% withSpinner(color = "#0A9396"),

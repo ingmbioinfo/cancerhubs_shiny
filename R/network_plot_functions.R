@@ -156,17 +156,17 @@ plot_tumor_network <- function(data, interactors, tumor, dataset_type = "All_Gen
     add_trace(
       type = "scatter3d", mode = "markers", x = 0, y = 0, z = 0, opacity = 0,
       marker = list(symbol = "circle", size = 0, color = "gray"),
-      name = "○ Non-mutated (small)", showlegend = TRUE
+      name = "○  Non-mutated (small)", showlegend = TRUE
     ) %>%
     add_trace(
       type = "scatter3d", mode = "markers", x = 0, y = 0, z = 0, opacity = 0,
       marker = list(symbol = "circle", size = 0, color = "gray"),
-      name = "● PRECOG (circle)", showlegend = TRUE
+      name = "●  PRECOG (circle)", showlegend = TRUE
     ) %>%
     add_trace(
       type = "scatter3d", mode = "markers", x = 0, y = 0, z = 0, opacity = 0,
       marker = list(symbol = "square", size = 0, color = "gray"),
-      name = "■ Non-PRECOG (square)", showlegend = TRUE
+      name = "■  Non-PRECOG (square)", showlegend = TRUE
     )
   
   

@@ -75,6 +75,8 @@ You can use the app directly online without installation:
 
 All gene tables and interaction datasets are loaded dynamically from the original CancerHubs repository:
 
+> **Note**: The *Network Score* used to rank genes is based solely on somatic mutation data and does **not** account for copy-number variations.
+
 - [`all_results.rds`](https://github.com/ingmbioinfo/cancerhubs/blob/main/result/all_results.rds)
 - [`genes_interactors_list.rds`](https://github.com/ingmbioinfo/cancerhubs/blob/main/result/genes_interactors_list.rds)
 - [`biogrid_interactors`](https://github.com/ingmbioinfo/cancerhubs/blob/main/data/biogrid_interactors)

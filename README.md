@@ -66,6 +66,9 @@ To run this app locally, ensure you have:
 You can use the app directly online without installation:  
 👉 [https://cancerhubs.app/](https://cancerhubs.app/)
 
+## 📑 Documentation
+- [PDF Manual](USER_MANUAL.pdf)
+
 ---
 
 ## 🧬 Data

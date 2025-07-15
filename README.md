@@ -54,7 +54,7 @@ Network Score = (# Mutated Interactors)^2 / (# Total Interactors)
 ```
 
 This score captures the degree to which a gene is embedded in a tumour-specific network of mutated partners. Genes with high scores may represent critical hubs in cancer-related processes.
-
+> **Note:** The Network Score is based exclusively on somatic mutation data and does **not** incorporate copy-number variations.
 
 ---
 
@@ -110,8 +110,6 @@ All datasets are fetched from the main [CancerHubs GitHub repository](https://gi
 - [`formatted_datasets`](https://github.com/ingmbioinfo/cancerhubs/tree/main/data/formatted_datasets) – preprocessed input data tables per tumour.
 - [`biogrid_interactors`](https://github.com/ingmbioinfo/cancerhubs/blob/main/data/biogrid_interactors) – full BioGRID-derived protein interaction data.
 - [`Mutational Data Summary`](https://github.com/ingmbioinfo/cancerhubs/blob/main/Mutational%20Data.pdf) – PDF describing mutation annotation sources, filtering rules, and dataset details.
-
-> **Note:** The Network Score is based exclusively on somatic mutation data and does **not** incorporate copy-number variations.
 
 ---
 

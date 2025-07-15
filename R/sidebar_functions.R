@@ -22,6 +22,9 @@ createSidebar <- function() {
             div(style = "font-size: 13px; text-align: justify;",
                 h4(style = "color: black; font-weight: bold; margin-top: 20px;", "Related Links"),
                 tags$ul(style = "list-style: none; padding-left: 0;",
+                        tags$li(tags$a(href = "https://github.com/ingmbioinfo/cancerhubs_shiny/blob/main/USER_MANUAL.pdf", target = "_blank", 
+                                       style = "color: #0073e6; text-decoration: none;",
+                                       "USER MANUAL")),
                         tags$li(tags$a(href = "https://academic.oup.com/bib/article/26/1/bbae635/7918695", target = "_blank", 
                                        style = "color: #0073e6; text-decoration: none;", 
                                        "CancerHubs paper on Briefings in Bioinformatics")),
@@ -33,7 +36,9 @@ createSidebar <- function() {
                                        "Updated App Directory")),
                         tags$li(tags$a(href = "https://github.com/ingmbioinfo/cancerhubs_paper", target = "_blank", 
                                        style = "color: #0073e6; text-decoration: none;", 
-                                       "CancerHubs Directory as Published in the Paper"))
+                                       "CancerHubs Directory as Published in the Paper")),
+                        tags$li(tags$a(href = "https://github.com/ingmbioinfo/cancerhubs/blob/main/Mutational%20Data.pdf", target = "_blank", 
+                                       style = "color: #0073e6; text-decoration: none;", "Mutational data sources"))
                 )
             ),
             

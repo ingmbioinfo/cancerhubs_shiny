@@ -34,7 +34,7 @@ The app organises genes into four evidence-driven categories:
 - **All Genes** – every scored gene that is either mutated or has prognostic relevance.
 - **Only Mutated** – genes harbouring mutations but lacking significant PRECOG scores (|meta-Z| < 1.96).
 - **PRECOG** – genes with significant prognostic association (|meta-Z| ≥ 1.96) regardless of mutation status.
-- **Only PRECOG** – genes with |meta-Z| ≥ 1.96 that are not mutated in the selected dataset.
+- **Only PRECOG** – genes with |meta-Z| ≥ 2.58 that are not mutated in the selected dataset.
 
 Each gene receives a **Network Score** measuring the fraction of its interactors that are mutated:
 

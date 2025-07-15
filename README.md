@@ -27,6 +27,23 @@ This Shiny application provides an interactive interface for exploring results f
 - **Gene Network (2D)**
   Explore direct interactors of any gene of interest. Visualise up to 50 interactors with igraph-style layout and download both the network image and tables.
 
+### Gene Subsets and Network Score
+
+The app organises genes into four evidence-driven categories:
+
+- **All Genes** – every scored gene that is either mutated or has prognostic relevance.
+- **Only Mutated** – genes harbouring mutations but lacking significant PRECOG scores (|meta-Z| < 1.96).
+- **PRECOG** – genes with significant prognostic association (|meta-Z| ≥ 1.96) regardless of mutation status.
+- **Only PRECOG** – genes with |meta-Z| ≥ 1.96 that are not mutated in the selected dataset.
+
+Each gene receives a **Network Score** measuring the fraction of its interactors that are mutated:
+
+```
+Network Score = (# Mutated Interactors) / (# Total Interactors)
+```
+
+This metric does not include copy-number variations. High scores highlight potential hubs driving oncogenic processes.
+
 ---
 
 ## 🛠️ Prerequisites
@@ -73,13 +90,21 @@ You can use the app directly online without installation:
 
 ## 🧬 Data
 
-All gene tables and interaction datasets are loaded dynamically from the original CancerHubs repository:
+All datasets are fetched directly from the main CancerHubs repository:
 
-> **Note**: The *Network Score* used to rank genes is based solely on somatic mutation data and does **not** account for copy-number variations.
+> **Note**: The *Network Score* is based solely on somatic mutation data and does **not** incorporate copy-number variations.
 
-- [`all_results.rds`](https://github.com/ingmbioinfo/cancerhubs/blob/main/result/all_results.rds)
-- [`genes_interactors_list.rds`](https://github.com/ingmbioinfo/cancerhubs/blob/main/result/genes_interactors_list.rds)
-- [`biogrid_interactors`](https://github.com/ingmbioinfo/cancerhubs/blob/main/data/biogrid_interactors)
+- [`all_results.rds`](https://github.com/ingmbioinfo/cancerhubs/blob/main/result/all_results.rds) – analysis output providing scores for each gene across cancer types.
+- [`genes_interactors_list.rds`](https://github.com/ingmbioinfo/cancerhubs/blob/main/result/genes_interactors_list.rds) – curated gene list with all corresponding interactors.
+- *Formatted datasets* – preprocessed input tables compiled from literature sources.
+- [`biogrid_interactors`](https://github.com/ingmbioinfo/cancerhubs/blob/main/data/biogrid_interactors) – full interaction records from BioGRID.
+- *Mutational Data Summary* – PDF describing the literature sources used for mutation data extraction.
+
+---
+
+### Troubleshooting
+
+If the app fails to return results, double-check the gene symbol and try reducing the number of genes or interactors shown. More hints are available in the [PDF Manual](USER_MANUAL.pdf).
 
 ---
 

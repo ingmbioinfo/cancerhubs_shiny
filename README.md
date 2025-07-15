@@ -68,7 +68,7 @@ To run this app locally, ensure you have:
   install.packages(c(
     "shiny", "ggplot2", "openxlsx", "DT", "plotly",
     "igraph", "RColorBrewer", "cowplot", "purrr",
-    "dplyr", "tidyr", "shinycssloaders"
+    "dplyr", "tidyr", "shinycssloaders", "shinyjs"
   ))
   ```
 

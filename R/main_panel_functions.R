@@ -137,7 +137,7 @@ createMainPanel <- function() {
                 
           ),
           tabPanel("Gene Network", value = "Gene Network",
-                   plotOutput("gene_network", width = "800px", height = "800px") %>% withSpinner(color = "#0A9396"),
+                   plotOutput("gene_network", click = "plot_click", width = "800px", height = "800px") %>% withSpinner(color = "#0A9396"),
                    br(),
                    div(
                      style ="display: flex; align-items: center; margin-top: -40px;",  # Add spacing between the graph and the legend

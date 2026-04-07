@@ -645,28 +645,51 @@ server <- function(input, output, session) {
   
   # GENE NETWORK
   
+  network_graph <- reactiveVal(NULL)
+  
   output$gene_network <- renderPlot({
-    req(input$g_network_tumor, input$gene_sel,input$data_type_precog)
+    req(input$g_network_tumor, input$gene_sel, input$data_type_precog)
     
-    # Time the ggplotly conversion
     start_time <- Sys.time()
     
+    g <- create_network(data = gene_interactors, 
+                        original = data,
+                        cancer_type = input$g_network_tumor,
+                        gene = input$gene_sel, 
+                        int_type = input$data_type_precog,
+                        include_mutated = input$g_network_mutated_interactors,
+                        crosses = input$cross,
+                        biogrid = biogrid,
+                        exp_systems = input$exp_systems)
     
-    # Generate the Plotly plot
-    plot <- create_network(data = gene_interactors, 
-                               original = data,
-                               cancer_type = input$g_network_tumor,
-                               gene = input$gene_sel, 
-                               int_type =input$data_type_precog,
-                               include_mutated = input$g_network_mutated_interactors,
-                               crosses = input$cross)
-    
-    
+    # Layout is already stored inside g
+    network_graph(list(g = g, layout = g$layout))
     
     end_time <- Sys.time()
+    print(end_time - start_time)
+  })
     
-    total = end_time - start_time
-    print(total)
+  
+  observeEvent(input$plot_click, {
+    click_data <- network_graph()
+    req(click_data)
+    
+    g <- click_data$g
+    lay <- click_data$layout
+    
+    x_range <- range(lay[, 1])
+    y_range <- range(lay[, 2])
+    
+    lay_scaled_x <- (lay[, 1] - x_range[1]) / (x_range[2] - x_range[1]) * 2 - 1
+    lay_scaled_y <- (lay[, 2] - y_range[1]) / (y_range[2] - y_range[1]) * 2 - 1
+    
+    distances <- sqrt((lay_scaled_x - input$plot_click$x)^2 + 
+                        (lay_scaled_y - input$plot_click$y)^2)
+    
+    clicked_node <- V(g)$name[which.min(distances)]
+    
+    url <- paste0("https://www.genecards.org/cgi-bin/carddisp.pl?gene=", clicked_node)
+    runjs(paste0('window.open("', url, '", "_blank")'))
   })
   
   output$downloadGeneNetwork <- downloadHandler(

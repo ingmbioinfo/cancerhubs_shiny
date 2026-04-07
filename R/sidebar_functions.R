@@ -206,6 +206,13 @@ createSidebar <- function() {
           textInput("gene_sel", "Enter Gene Name:", value = "TP53"),
           checkboxInput("g_network_mutated_interactors", "Include Only Mutated Interactors", value = TRUE),
           checkboxInput("cross", "Show all the interactions", value = FALSE),
+          selectInput(
+            "exp_systems",
+            "Experimental system:",
+            choices = c("All", unique(biogrid$Experimental.System)),
+            selected = NULL,
+            multiple = TRUE
+          ),
           br(),
           h4("Downloads"), 
           p("Here is available the network plot and the complete table of interactions for your interest gene.", style='font-size: 13px;'),

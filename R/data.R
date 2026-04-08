@@ -14,6 +14,6 @@ gene_interactors <- load_remote_rds("https://github.com/ingmbioinfo/cancerhubs/r
 
 print(Sys.time())
 
-biogrid = readRDS("biogrid_cut.rds")
+biogrid = load_remote_rds("https://github.com/ingmbioinfo/cancerhubs/raw/refs/heads/main/data/biogrid_cut.rds")
 
 print(Sys.time())
